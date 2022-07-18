@@ -8,10 +8,17 @@ public partial struct EtfContainer : IDisposable
 {
     public static readonly EtfContainer Nil = AsContainer(ArraySegment<byte>.Empty, EtfConstants.NilExt);
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-    private byte[] _smallDataStorage;
+    private byte[] _smallDataStorage = new byte[4];
     public ArraySegment<byte> ContainedData;
     public EtfConstants Type;
     internal IEtfComplex? _complexData;
+
+    public EtfContainer()
+    {
+        ContainedData = default;
+        Type = (EtfConstants)0;
+        _complexData = null;
+    }
 
     public static EtfContainer Make(int length, EtfConstants type)
     {
@@ -63,10 +70,7 @@ public partial struct EtfContainer : IDisposable
             ArrayPool<byte>.Shared.Return(ContainedData.Array);
         }
 
-        if (_complexData is not null)
-        {
-            _complexData.Dispose();
-        }
+        _complexData?.Dispose();
     }
 
     [Pure]
