@@ -4,5 +4,4 @@ namespace EtfDotNet.Types;
 
 public partial struct EtfContainer
 {
-    
 }

@@ -43,7 +43,7 @@ internal static class EtfDecoder
         if (typeId == EtfConstants.SmallBigExt)
         {
             var len = input.ReadByte();
-            return input.ReadContainer(len + 4, typeId);
+            return input.ReadContainer(len + 1, typeId);
         }
         if (typeId == EtfConstants.MapExt)
         {

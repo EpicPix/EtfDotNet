@@ -7,7 +7,7 @@ public class EtfMap : List<(EtfContainer, EtfContainer)>, IEtfType, IEtfComplex
     [Pure]
     public int GetSize()
     {
-        int size = 4; // uint length
+        int size = 4; // uint length (count)
         foreach (var container in this)
         {
             size += container.Item1.GetByteSize();
@@ -15,18 +15,25 @@ public class EtfMap : List<(EtfContainer, EtfContainer)>, IEtfType, IEtfComplex
         }
         return size;
     }
-    
+
+    public int GetSerializedSize()
+    {
+        int size = 4; // uint length (count)
+        foreach (var container in this)
+        {
+            size += container.Item1.GetSerializedByteSize();
+            size += container.Item2.GetSerializedByteSize();
+        }
+        return size;
+    }
+
     public void Serialize(EtfMemory memory)
     {
         memory.WriteUInt((uint)Count);
         foreach (var container in this)
         {
-            var buf = container.Item1.Serialize(out var ret);
-            memory.Write(buf);
-            if(ret) buf.ReturnShared();
-            var buf2 = container.Item2.Serialize(out var ret2);
-            memory.Write(buf2);
-            if(ret2) buf2.ReturnShared();
+            EtfEncoder.EncodeType(container.Item1, memory);
+            EtfEncoder.EncodeType(container.Item2, memory);
         }
     }
     

@@ -2,7 +2,7 @@
 
 namespace EtfDotNet;
 
-public struct EtfMemory
+public class EtfMemory
 {
     private ArraySegment<byte>? _arraySource;
     private int _position;

@@ -17,6 +17,11 @@ public static class EtfFormat
     public static void Pack(EtfContainer etfType, EtfMemory output)
     {
         output.WriteConstant(EtfConstants.VersionNumber);
-        EtfEncoder.EncodeType(output, etfType);
+        EtfEncoder.EncodeType(etfType, output);
+    }
+
+    public static int GetPackedSize(EtfContainer container)
+    {
+        return container.GetSerializedByteSize() + 1;
     }
 }
