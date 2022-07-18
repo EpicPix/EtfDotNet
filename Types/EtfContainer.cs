@@ -47,7 +47,7 @@ public partial struct EtfContainer : IDisposable
     public void Dispose()
     {
         _complexData?.Dispose();
-        if (_returnToPool) return;
+        if (!_returnToPool) return;
         ArrayPool<byte>.Shared.Return(ContainedData.Array);
     }
 
