@@ -1,33 +1,23 @@
 ﻿using System.Buffers;
 using System.Diagnostics.Contracts;
-using System.Runtime.InteropServices;
 
 namespace EtfDotNet.Types;
 
 public partial struct EtfContainer : IDisposable
 {
     public static readonly EtfContainer Nil = AsContainer(ArraySegment<byte>.Empty, EtfConstants.NilExt);
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-    private byte[] _smallDataStorage;
+    private bool _returnToPool;
     public ArraySegment<byte> ContainedData;
     public EtfConstants Type;
     internal IEtfComplex? _complexData;
 
     public static EtfContainer Make(int length, EtfConstants type)
     {
-        if (length <= 4)
-        {
-            var container = new EtfContainer()
-            {
-                Type = type
-            };
-            container.ContainedData = new ArraySegment<byte>(container._smallDataStorage!);
-            return container;
-        }
         return new EtfContainer()
         {
             ContainedData = new ArraySegment<byte>(ArrayPool<byte>.Shared.Rent(length), 0, length),
-            Type = type
+            Type = type,
+            _returnToPool = true
         };
     }
 
@@ -37,9 +27,8 @@ public partial struct EtfContainer : IDisposable
         {
             Type = type,
             ContainedData = data,
+            _returnToPool = false
         };
-        // do not return to array pool
-        BitConverter.TryWriteBytes(container._smallDataStorage, long.MaxValue);
         return container;
     }
 
@@ -48,25 +37,17 @@ public partial struct EtfContainer : IDisposable
         var container = new EtfContainer()
         {
             Type = type,
-            _complexData = complexData
+            _complexData = complexData,
+            _returnToPool = false,
         };
-        // do not return to array pool
-        BitConverter.TryWriteBytes(container._smallDataStorage, long.MaxValue);
         return container;
     }
     
     public void Dispose()
     {
-        if (ContainedData.Count > 4)
-        {
-            if (BitConverter.ToInt64(_smallDataStorage) == long.MaxValue) return;
-            ArrayPool<byte>.Shared.Return(ContainedData.Array);
-        }
-
-        if (_complexData is not null)
-        {
-            _complexData.Dispose();
-        }
+        _complexData?.Dispose();
+        if (!_returnToPool) return;
+        ArrayPool<byte>.Shared.Return(ContainedData.Array);
     }
 
     [Pure]
