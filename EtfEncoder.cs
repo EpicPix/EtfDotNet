@@ -21,8 +21,13 @@ internal static class EtfEncoder
         }
         if (type is EtfList list)
         {
-            output.WriteConstant(EtfConstants.ListExt);
-            EncodeList(output, list);
+            if (list.Count != 0)
+            {
+                output.WriteConstant(EtfConstants.ListExt);
+                EncodeList(output, list);
+                return;
+            }
+            output.WriteConstant(EtfConstants.NilExt);
             return;
         }
         if (type is EtfBinary binary)

@@ -17,6 +17,10 @@ internal static class EtfDecoder
         {
             return DecodeAtom(input);
         }
+        if (typeId == EtfConstants.NilExt)
+        {
+            return new EtfList();
+        }
         if (typeId == EtfConstants.ListExt)
         {
             return DecodeList(input);
