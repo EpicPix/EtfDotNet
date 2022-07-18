@@ -1,3 +1,5 @@
+using EtfDotNet.Types;
+
 namespace EtfDotNet;
 
 public static class EtfFormat

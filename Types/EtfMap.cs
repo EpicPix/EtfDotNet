@@ -1,4 +1,4 @@
-namespace EtfDotNet;
+namespace EtfDotNet.Types;
 
 public class EtfMap : EtfType
 {

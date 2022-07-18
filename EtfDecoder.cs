@@ -1,3 +1,5 @@
+using EtfDotNet.Types;
+
 namespace EtfDotNet;
 
 internal static class EtfDecoder
