@@ -23,4 +23,12 @@ public class EtfList : List<EtfContainer>, IEtfType, IEtfComplex
         }
         memory.WriteConstant(EtfConstants.NilExt);
     }
+
+    public void Dispose()
+    {
+        foreach (var container in this)
+        {
+            container.Dispose();
+        }
+    }
 }
