@@ -15,4 +15,14 @@ public static class EtfJson
         }
         return node;
     }
+    
+    public static EtfType ConvertJsonToEtf(JsonNode node)
+    {
+        var type = JsonToEtfConverter.Convert(node);
+        if (type is null)
+        {
+            throw new JsonException("Node is null");
+        }
+        return type;
+    }
 }
