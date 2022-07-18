@@ -1,11 +1,9 @@
 namespace EtfDotNet.Types;
 
-public class EtfAtom : EtfType
+public record struct EtfAtom(string Name) : EtfType
 {
-    public readonly string Name;
-    
-    public EtfAtom(string name)
+    public static implicit operator EtfAtom(string str)
     {
-        Name = name;
+        return new EtfAtom(str);
     }
 }
