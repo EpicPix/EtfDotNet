@@ -7,7 +7,7 @@ public class EtfList : List<EtfContainer>, IEtfType, IEtfComplex
         int size = 5; // uint length + 1 EtfConstant
         foreach (var container in this)
         {
-            size += container.GetByteSize();
+            size += container.GetSize();
         }
         return size;
     }
@@ -17,7 +17,7 @@ public class EtfList : List<EtfContainer>, IEtfType, IEtfComplex
         int size = 5; // uint length (count) + 1 EtfConstant
         foreach (var container in this)
         {
-            size += container.GetSerializedByteSize();
+            size += EtfEncoder.CalculateTypeSize(container);
         }
         return size;
     }

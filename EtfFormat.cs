@@ -22,6 +22,6 @@ public static class EtfFormat
 
     public static int GetPackedSize(EtfContainer container)
     {
-        return container.GetSerializedByteSize() + 1;
+        return EtfEncoder.CalculateTypeSize(container) + 1;
     }
 }

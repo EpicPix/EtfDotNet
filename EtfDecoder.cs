@@ -17,6 +17,16 @@ internal static class EtfDecoder
         {
             return input.ReadContainer(4, typeId);
         }
+        if (typeId == EtfConstants.BinaryExt)
+        {
+            var len = input.ReadUInt();
+            return input.ReadContainer((int)len, typeId);
+        }
+        if (typeId == EtfConstants.SmallBigExt)
+        {
+            var len = input.ReadByte();
+            return input.ReadContainer(len + 1, typeId);
+        }
         if (typeId == EtfConstants.StringExt)
         {
             var len = input.ReadUShort();
@@ -34,16 +44,6 @@ internal static class EtfDecoder
         if (typeId == EtfConstants.ListExt)
         {
             return DecodeList(input);
-        }
-        if (typeId == EtfConstants.BinaryExt)
-        {
-            var len = input.ReadUInt();
-            return input.ReadContainer((int)len, typeId);
-        }
-        if (typeId == EtfConstants.SmallBigExt)
-        {
-            var len = input.ReadByte();
-            return input.ReadContainer(len + 1, typeId);
         }
         if (typeId == EtfConstants.MapExt)
         {

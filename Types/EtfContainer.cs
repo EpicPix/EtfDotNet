@@ -70,7 +70,7 @@ public partial struct EtfContainer : IDisposable
     }
 
     [Pure]
-    public int GetByteSize()
+    public int GetSize()
     {
         if (_complexData is not null)
         {
@@ -79,16 +79,11 @@ public partial struct EtfContainer : IDisposable
 
         return ContainedData.Count;
     }
-    
-    [Pure]
-    public int GetSerializedByteSize()
-    {
-        if (_complexData is not null)
-        {
-            return _complexData.GetSerializedSize() + 1;
-        }
 
-        return ContainedData.Count + 1;
+    [Pure]
+    public int GetSerializedSize()
+    {
+        return EtfEncoder.CalculateTypeSize(this);
     }
 
     [Pure]
