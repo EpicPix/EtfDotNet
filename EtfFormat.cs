@@ -22,12 +22,35 @@ public static class EtfFormat
         {
             throw new EtfException("Invalid version number");
         }
-        throw new NotImplementedException();
+        return DecodeType(input);
     }
 
     public static void Pack(EtfType type, Stream output)
     {
         output.WriteConstant(EtfConstants.VersionNumber);
-        throw new NotImplementedException();
+        EncodeType(type, output);
     }
+
+    private static EtfType DecodeType(Stream input)
+    {
+        var typeId = input.ReadConstant();
+        switch (typeId)
+        {
+            case EtfConstants.MapExt:
+                throw new NotImplementedException();
+            default:
+                throw new EtfException($"Unknown type {typeId}");
+        }
+    }
+
+    private static void EncodeType(EtfType type, Stream output)
+    {
+        if (type is EtfMap map)
+        {
+            output.WriteConstant(EtfConstants.MapExt);
+            throw new NotImplementedException();
+        }
+        throw new EtfException($"Unknown type {type}");
+    }
+    
 }
