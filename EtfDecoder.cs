@@ -12,6 +12,10 @@ internal static class EtfDecoder
         {
             return DecodeAtom(input);
         }
+        if (typeId == EtfConstants.ListExt)
+        {
+            return DecodeList(input);
+        }
         if (typeId == EtfConstants.MapExt)
         {
             return DecodeMap(input);
@@ -28,6 +32,21 @@ internal static class EtfDecoder
             throw new IOException("Not everything has been read from the stream");
         }
         return new EtfAtom(Encoding.Latin1.GetString(latin1Text));
+    }
+
+    public static EtfList DecodeList(Stream input)
+    {
+        var length = input.ReadUInt();
+        var list = new EtfList();
+        for (var i = 0u; i < length; i++)
+        {
+            list.Add(DecodeType(input));
+        }
+        if (input.ReadConstant() != EtfConstants.NilExt)
+        {
+            throw new EtfException("Expected NilExt");
+        }
+        return list;
     }
 
     public static EtfMap DecodeMap(Stream input)

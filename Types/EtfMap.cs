@@ -9,6 +9,12 @@ public class EtfMap : EtfType
         get => _dict[at];
         set => _dict[at] = value;
     }
+    
+    public EtfType this[EtfAtom at]
+    {
+        get => _dict[at];
+        set => _dict[at] = value;
+    }
 
     public List<(EtfType, EtfType)> Entries()
     {

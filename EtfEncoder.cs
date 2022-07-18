@@ -13,6 +13,12 @@ internal static class EtfEncoder
             EncodeAtom(output, atom);
             return;
         }
+        if (type is EtfList list)
+        {
+            output.WriteConstant(EtfConstants.ListExt);
+            EncodeList(output, list);
+            return;
+        }
         if (type is EtfMap map)
         {
             output.WriteConstant(EtfConstants.MapExt);
@@ -27,6 +33,16 @@ internal static class EtfEncoder
         var bytes = Encoding.Latin1.GetBytes(atom.Name);
         output.WriteUShort((ushort) bytes.Length);
         output.Write(bytes);
+    }
+    
+    private static void EncodeList(Stream output, EtfList list)
+    {
+        output.WriteUInt((uint) list.Count);
+        foreach(var value in list)
+        {
+            EncodeType(output, value);
+        }
+        output.WriteConstant(EtfConstants.NilExt);
     }
     
     private static void EncodeMap(Stream output, EtfMap map)
