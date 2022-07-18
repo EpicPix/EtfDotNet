@@ -16,4 +16,16 @@
         <RepositoryUrl>https://github.com/EpicPix/EtfDotNet/</RepositoryUrl>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Remove="EtfDotNet.Tests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="EtfDotNet.Tests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="EtfDotNet.Tests\**" />
+    </ItemGroup>
+
 </Project>

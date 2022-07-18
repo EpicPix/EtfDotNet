@@ -4,7 +4,7 @@ namespace EtfDotNet;
 
 public static class EtfFormat
 {
-
+    
     public static EtfContainer Unpack(EtfMemory input)
     {
         if (input.ReadConstant() != EtfConstants.VersionNumber)
