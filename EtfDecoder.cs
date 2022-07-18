@@ -11,7 +11,11 @@ internal static class EtfDecoder
         var typeId = input.ReadConstant();
         if (typeId == EtfConstants.SmallIntegerExt)
         {
-            return DecodeSmallInteger(input);
+            return new EtfSmallInteger((byte) input.ReadByte());
+        }
+        if (typeId == EtfConstants.IntegerExt)
+        {
+            return new EtfInteger((int) input.ReadUInt());
         }
         if (typeId == EtfConstants.AtomExt)
         {
@@ -38,11 +42,6 @@ internal static class EtfDecoder
             return DecodeMap(input);
         }
         throw new EtfException($"Unknown type {typeId}");
-    }
-
-    public static EtfSmallInteger DecodeSmallInteger(Stream input)
-    {
-        return new EtfSmallInteger((byte) input.ReadByte());
     }
 
     public static EtfAtom DecodeAtom(Stream input)

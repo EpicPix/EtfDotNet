@@ -13,6 +13,12 @@ internal static class EtfEncoder
             output.WriteByte(smallInteger.Value);
             return;
         }
+        if (type is EtfInteger integer)
+        {
+            output.WriteConstant(EtfConstants.IntegerExt);
+            output.WriteUInt((uint) integer.Value);
+            return;
+        }
         if (type is EtfAtom atom)
         {
             output.WriteConstant(EtfConstants.AtomExt);
