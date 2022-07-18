@@ -10,8 +10,9 @@
         <Authors>EpicPix</Authors>
         <PackageTags>etf</PackageTags>
         <Description>
-            This package adds support for erlang External Term Format
+            This package adds support for Erlang External Term Format
         </Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
     </PropertyGroup>
 
 </Project>
