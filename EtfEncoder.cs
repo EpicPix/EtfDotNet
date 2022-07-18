@@ -19,6 +19,12 @@ internal static class EtfEncoder
             EncodeList(output, list);
             return;
         }
+        if (type is EtfBinary binary)
+        {
+            output.WriteConstant(EtfConstants.BinaryExt);
+            EncodeBinary(output, binary);
+            return;
+        }
         if (type is EtfBig big)
         {
             var sign = big.Number.Sign == decimal.One;
@@ -61,6 +67,16 @@ internal static class EtfEncoder
             EncodeType(output, value);
         }
         output.WriteConstant(EtfConstants.NilExt);
+    }
+    
+    private static void EncodeBinary(Stream output, EtfBinary binary)
+    {
+        var bytes = binary.Bytes;
+        output.WriteUInt((uint) bytes.Count);
+        for (var i = 0; i < bytes.Count; i++)
+        {
+            output.WriteByte(bytes[i]);
+        }
     }
     
     private static void EncodeMap(Stream output, EtfMap map)

@@ -17,6 +17,10 @@ internal static class EtfDecoder
         {
             return DecodeList(input);
         }
+        if (typeId == EtfConstants.BinaryExt)
+        {
+            return DecodeBinary(input);
+        }
         if (typeId == EtfConstants.SmallBigExt)
         {
             return DecodeSmallBig(input);
@@ -52,6 +56,17 @@ internal static class EtfDecoder
             throw new EtfException("Expected NilExt");
         }
         return list;
+    }
+
+    public static EtfBinary DecodeBinary(Stream input)
+    {
+        var len = input.ReadUInt();
+        var bytes = new byte[len];
+        if (input.Read(bytes) != len)
+        {
+            throw new IOException("Not everything has been read from the stream");
+        }
+        return new EtfBinary(bytes);
     }
 
     public static EtfBig DecodeSmallBig(Stream input)
