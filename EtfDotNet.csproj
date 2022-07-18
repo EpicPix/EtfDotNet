@@ -13,6 +13,7 @@
             This package adds support for Erlang External Term Format
         </Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/EpicPix/EtfDotNet/</RepositoryUrl>
     </PropertyGroup>
 
 </Project>
