@@ -54,6 +54,6 @@ internal static class EtfToJsonConverter
         {
             return JsonValue.Create(smallInteger);
         }
-        throw new NotImplementedException();
+        throw new EtfException($"Unknown EtfType: {type}");
     }
 }
