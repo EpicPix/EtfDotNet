@@ -9,6 +9,10 @@ internal static class EtfDecoder
     public static EtfType DecodeType(Stream input)
     {
         var typeId = input.ReadConstant();
+        if (typeId == EtfConstants.SmallIntegerExt)
+        {
+            return DecodeSmallInteger(input);
+        }
         if (typeId == EtfConstants.AtomExt)
         {
             return DecodeAtom(input);
@@ -30,6 +34,11 @@ internal static class EtfDecoder
             return DecodeMap(input);
         }
         throw new EtfException($"Unknown type {typeId}");
+    }
+
+    public static EtfSmallInteger DecodeSmallInteger(Stream input)
+    {
+        return new EtfSmallInteger((byte) input.ReadByte());
     }
 
     public static EtfAtom DecodeAtom(Stream input)

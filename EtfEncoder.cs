@@ -7,6 +7,12 @@ internal static class EtfEncoder
 {
     public static void EncodeType(Stream output, EtfType type)
     {
+        if (type is EtfSmallInteger smallInteger)
+        {
+            output.WriteConstant(EtfConstants.SmallIntegerExt);
+            output.WriteByte(smallInteger.Value);
+            return;
+        }
         if (type is EtfAtom atom)
         {
             output.WriteConstant(EtfConstants.AtomExt);
