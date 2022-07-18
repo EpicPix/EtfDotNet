@@ -31,7 +31,12 @@ internal static class EtfToJsonConverter
         }
         if (type is EtfAtom atom)
         {
-            return JsonValue.Create(atom.Name);
+            return atom.Name switch {
+                "false" => JsonValue.Create(false),
+                "true" => JsonValue.Create(true),
+                "nil" => null,
+                _ => JsonValue.Create(atom.Name)
+            };
         }
         if (type is EtfInteger integer)
         {
@@ -52,7 +57,7 @@ internal static class EtfToJsonConverter
         }
         if (type is EtfSmallInteger smallInteger)
         {
-            return JsonValue.Create(smallInteger);
+            return JsonValue.Create(smallInteger.Value);
         }
         throw new EtfException($"Unknown EtfType: {type}");
     }
