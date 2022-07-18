@@ -7,7 +7,7 @@ public class EtfMap : List<(EtfContainer, EtfContainer)>, IEtfType, IEtfComplex
     [Pure]
     public int GetSize()
     {
-        int size = 5; // uint length + 1 EtfConstant
+        int size = 4; // uint length
         foreach (var container in this)
         {
             size += container.Item1.GetByteSize();
@@ -27,6 +27,15 @@ public class EtfMap : List<(EtfContainer, EtfContainer)>, IEtfType, IEtfComplex
             var buf2 = container.Item2.Serialize(out var ret2);
             memory.Write(buf2);
             if(ret2) buf2.ReturnShared();
+        }
+    }
+    
+    public void Dispose()
+    {
+        foreach (var container in this)
+        {
+            container.Item1.Dispose();
+            container.Item2.Dispose();
         }
     }
 }

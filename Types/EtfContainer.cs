@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace EtfDotNet.Types;
 
-public struct EtfContainer : IDisposable
+public partial struct EtfContainer : IDisposable
 {
     public static readonly EtfContainer Nil = AsContainer(ArraySegment<byte>.Empty, EtfConstants.NilExt);
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
@@ -62,6 +62,11 @@ public struct EtfContainer : IDisposable
             if (BitConverter.ToInt64(_smallDataStorage) == long.MaxValue) return;
             ArrayPool<byte>.Shared.Return(ContainedData.Array);
         }
+
+        if (_complexData is not null)
+        {
+            _complexData.Dispose();
+        }
     }
 
     [Pure]
@@ -90,5 +95,11 @@ public struct EtfContainer : IDisposable
 
         shouldReturnToSharedPool = false;
         return ContainedData;
+    }
+
+    public void EnforceIsType(EtfConstants type)
+    {
+        if (Type != type)
+            throw new InvalidCastException($"The EtfContainer is of type {Type} and not {type}");
     }
 }
