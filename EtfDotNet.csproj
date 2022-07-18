@@ -5,13 +5,15 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         
-        <PackageId>EpicPix.ElfDotNet</PackageId>
+        <PackageId>EpicPix.EtfDotNet</PackageId>
         <Version>1.0.0</Version>
         <Authors>EpicPix</Authors>
         <PackageTags>etf</PackageTags>
         <Description>
-            This package adds support for erlang External Term Format
+            This package adds support for Erlang External Term Format
         </Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/EpicPix/EtfDotNet/</RepositoryUrl>
     </PropertyGroup>
 
 </Project>
