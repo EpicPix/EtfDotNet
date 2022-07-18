@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EtfDotNet", "EtfDotNet.csproj", "{42BC30B9-D706-4172-B70D-9941C8A08982}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EtfDotNet.Tests", "EtfDotNet.Tests\EtfDotNet.Tests.csproj", "{36593104-386E-42AA-9493-5B296FB8EE0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EtfDotNet.Benchmarks", "EtfDotNet.Benchmarks\EtfDotNet.Benchmarks.csproj", "{36593104-386E-42AA-9493-5B296FB8EE0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
