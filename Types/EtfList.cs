@@ -1,6 +1,6 @@
 namespace EtfDotNet.Types;
 
-public class EtfList : List<EtfContainer>, IEtfType, IEtfComplex
+public class EtfList : List<EtfContainer>, IEtfComplex
 {
     public int GetSize()
     {

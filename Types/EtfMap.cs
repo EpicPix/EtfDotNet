@@ -2,7 +2,7 @@ using System.Diagnostics.Contracts;
 
 namespace EtfDotNet.Types;
 
-public class EtfMap : List<(EtfContainer, EtfContainer)>, IEtfType, IEtfComplex
+public class EtfMap : List<(EtfContainer, EtfContainer)>, IEtfComplex
 {
     [Pure]
     public int GetSize()

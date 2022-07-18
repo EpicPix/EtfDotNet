@@ -20,7 +20,7 @@ public partial struct EtfContainer
     {
         if (v.Type == EtfConstants.AtomExt)
         {
-            return ToAtom(v);
+            return v.ToAtom();
         }
         v.EnforceIsType(EtfConstants.StringExt);
         return Encoding.Latin1.GetString(v.ContainedData);

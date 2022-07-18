@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Text;
 using System.Text.Json.Nodes;
 using EtfDotNet.Types;
@@ -7,34 +8,34 @@ namespace EtfDotNet.Json;
 internal static class JsonToEtfConverter
 {
 
-    public static EtfType Convert(JsonNode? type)
+    public static EtfContainer Convert(JsonNode? type)
     {
         if (type is null)
         {
-            return new EtfAtom("nil");
+            return EtfContainer.Nil;
         }
         if (type is JsonValue val)
         {
             if (val.TryGetValue<bool>(out var vbool))
             {
-                return vbool ? new EtfAtom("true") : new EtfAtom("false");
+                return vbool ? "true" : "false";
             }
             if (val.TryGetValue<string>(out var vstring))
             {
-                return new EtfBinary(Encoding.UTF8.GetBytes(vstring));
+                return Encoding.UTF8.GetBytes(vstring);
             }
             var v = val.GetValue<object>();
             if(long.TryParse(v.ToString(), out var vlong))
             {
                 if (vlong >= byte.MinValue && vlong <= byte.MaxValue)
                 {
-                    return new EtfSmallInteger((byte) vlong);
+                    return (byte) vlong;
                 }
                 if (vlong >= int.MinValue && vlong <= int.MaxValue)
                 {
-                    return new EtfInteger((int) vlong);
+                    return (int) vlong;
                 }
-                return new EtfBig(vlong);
+                // return (BigInteger)vlong;
             }
             throw new EtfException($"Unknown Json value type: {v.GetType()}");
         }
@@ -52,7 +53,7 @@ internal static class JsonToEtfConverter
             var map = new EtfMap();
             foreach (var (k, v) in obj)
             {
-                map[new EtfBinary(Encoding.UTF8.GetBytes(k))] = Convert(v);
+                map.Add((k, Convert(v)));
             }
             return map;
         }

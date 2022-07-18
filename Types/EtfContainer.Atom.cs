@@ -16,9 +16,9 @@ public partial struct EtfContainer
         return container;
     }
 
-    public static string ToAtom(EtfContainer container)
+    public string ToAtom()
     {
-        container.EnforceIsType(EtfConstants.AtomExt);
-        return Encoding.Latin1.GetString(container.ContainedData);
+        EnforceIsType(EtfConstants.AtomExt);
+        return Encoding.Latin1.GetString(ContainedData);
     }
 }

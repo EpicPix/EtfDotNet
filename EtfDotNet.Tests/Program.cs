@@ -1,4 +1,5 @@
 ﻿using EtfDotNet;
+using EtfDotNet.Json;
 
 var data = new byte[]
 {
@@ -16,3 +17,5 @@ Console.WriteLine(string.Join(",", dArr));
 Console.WriteLine($"Original {data.Length}, Packed {data.Length}. Original == Packed {data.SequenceEqual(dArr)}");
 
 Console.WriteLine(container.GetSerializedSize());
+
+Console.WriteLine(EtfJson.ConvertEtfToJson(container));
