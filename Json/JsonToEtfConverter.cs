@@ -12,7 +12,7 @@ internal static class JsonToEtfConverter
     {
         if (type is null)
         {
-            return EtfContainer.Nil;
+            return "nil";
         }
         if (type is JsonValue val)
         {
