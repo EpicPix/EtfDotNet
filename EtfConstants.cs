@@ -4,5 +4,6 @@ public enum EtfConstants : byte
 {
     VersionNumber = 131,
     
-    MapExt = 116
+    AtomExt = 100,
+    MapExt = 116,
 }
