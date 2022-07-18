@@ -4,21 +4,8 @@ namespace EtfDotNet;
 
 public static class EtfFormat
 {
-    public static EtfType Unpack(byte[] bytes)
-    {
-        using var stream = new MemoryStream(bytes);
-        return Unpack(stream);
-    }
 
-    public static byte[] Pack(EtfType type)
-    {
-        using var stream = new MemoryStream();
-        Pack(type, stream);
-        return stream.ToArray();
-    }
-    
-    
-    public static EtfType Unpack(Stream input)
+    public static EtfContainer Unpack(EtfMemory input)
     {
         if (input.ReadConstant() != EtfConstants.VersionNumber)
         {
@@ -27,10 +14,9 @@ public static class EtfFormat
         return EtfDecoder.DecodeType(input);
     }
 
-    public static void Pack(EtfType type, Stream output)
+    public static void Pack(EtfContainer etfType, EtfMemory output)
     {
         output.WriteConstant(EtfConstants.VersionNumber);
-        EtfEncoder.EncodeType(output, type);
+        EtfEncoder.EncodeType(output, etfType);
     }
-    
 }
