@@ -1,6 +1,6 @@
 namespace EtfDotNet.Types;
 
-public record EtfSmallInteger(byte Value) : EtfType
+public record struct EtfSmallInteger(byte Value) : EtfType
 {
     public static implicit operator EtfSmallInteger(byte v)
     {
