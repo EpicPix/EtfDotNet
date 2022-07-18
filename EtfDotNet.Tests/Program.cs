@@ -15,4 +15,4 @@ Console.WriteLine(string.Join(",", dArr));
 
 Console.WriteLine($"Original {data.Length}, Packed {data.Length}. Original == Packed {data.SequenceEqual(dArr)}");
 
-Console.WriteLine(container.GetSerializedByteSize());
+Console.WriteLine(container.GetSerializedSize());
