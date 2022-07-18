@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -51,10 +52,10 @@ internal static class EtfToJsonConverter
         {
             return JsonValue.Create((string)type);
         }
-        // if (type is EtfBig big)
-        // {
-        //     return JsonValue.Create(big.Number.ToString());
-        // }
+        if (type.Type == EtfConstants.SmallBigExt)
+        {
+            return JsonValue.Create(((BigInteger)type).ToString());
+        }
         if (type.Type == EtfConstants.BinaryExt)
         {
             return JsonValue.Create(Encoding.Latin1.GetString(type.ContainedData));

@@ -35,7 +35,7 @@ internal static class JsonToEtfConverter
                 {
                     return (int) vlong;
                 }
-                // return (BigInteger)vlong;
+                return (BigInteger)vlong;
             }
             throw new EtfException($"Unknown Json value type: {v.GetType()}");
         }
