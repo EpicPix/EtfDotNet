@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Text;
 using EtfDotNet.Types;
 
@@ -15,6 +16,10 @@ internal static class EtfDecoder
         if (typeId == EtfConstants.ListExt)
         {
             return DecodeList(input);
+        }
+        if (typeId == EtfConstants.SmallBigExt)
+        {
+            return DecodeSmallBig(input);
         }
         if (typeId == EtfConstants.MapExt)
         {
@@ -47,6 +52,19 @@ internal static class EtfDecoder
             throw new EtfException("Expected NilExt");
         }
         return list;
+    }
+
+    public static EtfBig DecodeSmallBig(Stream input)
+    {
+        var len = input.ReadByte();
+        var sign = input.ReadByte();
+        var num = new BigInteger();
+        for (var i = 0; i < len; i++)
+        {
+            num += input.ReadByte() * BigInteger.Pow(256, i);
+        }
+        if (sign == 1) num = -num;
+        return new EtfBig(num);
     }
 
     public static EtfMap DecodeMap(Stream input)

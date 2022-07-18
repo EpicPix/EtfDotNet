@@ -19,6 +19,20 @@ internal static class EtfEncoder
             EncodeList(output, list);
             return;
         }
+        if (type is EtfBig big)
+        {
+            var sign = big.Number.Sign == decimal.One;
+            var bytes = sign ? (-big.Number).ToByteArray() : big.Number.ToByteArray();
+            if (bytes.Length > 255)
+            {
+                throw new EtfException("Cannot encode number with more than 255 bytes");
+            }
+            output.WriteConstant(EtfConstants.SmallBigExt);
+            output.WriteByte((byte) (sign ? 1 : 0));
+            output.WriteByte((byte) bytes.Length);
+            output.Write(bytes);
+            return;
+        }
         if (type is EtfMap map)
         {
             output.WriteConstant(EtfConstants.MapExt);
@@ -31,6 +45,10 @@ internal static class EtfEncoder
     private static void EncodeAtom(Stream output, EtfAtom atom)
     {
         var bytes = Encoding.Latin1.GetBytes(atom.Name);
+        if (bytes.Length > 255)
+        {
+            throw new EtfException("Currently cannot encode atom with >255 bytes");
+        }
         output.WriteUShort((ushort) bytes.Length);
         output.Write(bytes);
     }
