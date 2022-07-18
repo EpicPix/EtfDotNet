@@ -6,7 +6,7 @@ namespace EtfDotNet;
 
 internal static class EtfEncoder
 {
-    public static void EncodeType(EtfMemory output, EtfContainer container)
+    public static void EncodeType(EtfContainer container, EtfMemory output)
     {
         output.WriteConstant(container.Type);
         var buf = container.Serialize(out var ret);

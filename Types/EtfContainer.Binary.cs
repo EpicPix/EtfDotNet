@@ -6,9 +6,7 @@ public partial struct EtfContainer
 {
     public static implicit operator EtfContainer(ArraySegment<byte> v)
     {
-        var container = Make(v.Count, EtfConstants.BinaryExt);
-        EtfMemory.FromArray(container.ContainedData).Write(v);
-        return container;
+        return AsContainer(v, EtfConstants.BinaryExt);
     }
     
     public static implicit operator ArraySegment<byte>(EtfContainer v)

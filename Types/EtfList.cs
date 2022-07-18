@@ -11,15 +11,23 @@ public class EtfList : List<EtfContainer>, IEtfType, IEtfComplex
         }
         return size;
     }
+    
+    public int GetSerializedSize()
+    {
+        int size = 5; // uint length (count) + 1 EtfConstant
+        foreach (var container in this)
+        {
+            size += container.GetSerializedByteSize();
+        }
+        return size;
+    }
 
     public void Serialize(EtfMemory memory)
     {
         memory.WriteUInt((uint)Count);
         foreach (var container in this)
         {
-            var buf = container.Serialize(out var ret);
-            memory.Write(buf);
-            if(ret) buf.ReturnShared();
+            EtfEncoder.EncodeType(container, memory);
         }
         memory.WriteConstant(EtfConstants.NilExt);
     }

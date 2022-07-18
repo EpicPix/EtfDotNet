@@ -79,6 +79,17 @@ public partial struct EtfContainer : IDisposable
 
         return ContainedData.Count;
     }
+    
+    [Pure]
+    public int GetSerializedByteSize()
+    {
+        if (_complexData is not null)
+        {
+            return _complexData.GetSerializedSize() + 1;
+        }
+
+        return ContainedData.Count + 1;
+    }
 
     [Pure]
     public ArraySegment<byte> Serialize(out bool shouldReturnToSharedPool)
@@ -86,7 +97,7 @@ public partial struct EtfContainer : IDisposable
         if (_complexData is not null)
         {
             shouldReturnToSharedPool = true;
-            var size = GetByteSize();
+            var size = _complexData.GetSerializedSize();
             var arr = new ArraySegment<byte>(ArrayPool<byte>.Shared.Rent(size), 0, size);
             var mem = EtfMemory.FromArray(arr);
             _complexData.Serialize(mem);

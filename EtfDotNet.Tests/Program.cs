@@ -7,4 +7,12 @@ var data = new byte[]
 
 var container = EtfFormat.Unpack(EtfMemory.FromArray(data));
 
-Console.WriteLine(container.GetByteSize());
+var dArr = new byte[EtfFormat.GetPackedSize(container)];
+
+EtfFormat.Pack(container, EtfMemory.FromArray(dArr));
+
+Console.WriteLine(string.Join(",", dArr));
+
+Console.WriteLine($"Original {data.Length}, Packed {data.Length}. Original == Packed {data.SequenceEqual(dArr)}");
+
+Console.WriteLine(container.GetSerializedByteSize());

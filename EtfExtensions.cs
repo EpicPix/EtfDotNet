@@ -25,6 +25,15 @@ internal static class EtfExtensions
         var value4 = (byte) stream.ReadByte();
         return (uint) ((value1 << 24) | (value2 << 16) | (value3 << 8) | value4);
     }
+    
+    public static uint ReadUInt(this ArraySegment<byte> buf)
+    {
+        var value1 = buf[0];
+        var value2 = buf[1];
+        var value3 = buf[2];
+        var value4 = buf[3];
+        return (uint) ((value1 << 24) | (value2 << 16) | (value3 << 8) | value4);
+    }
 
     public static ulong ReadULong(this EtfMemory stream)
     {
@@ -50,6 +59,14 @@ internal static class EtfExtensions
         stream.WriteByte((byte) (value >> 16));
         stream.WriteByte((byte) (value >> 8));
         stream.WriteByte((byte) value);
+    }
+    
+    public static void WriteUInt(this ArraySegment<byte> buf, uint value)
+    {
+        buf[0] = (byte) (value >> 24);
+        buf[1] = (byte) (value >> 16);
+        buf[2] = (byte) (value >> 8);
+        buf[3] = (byte) value;
     }
 
     public static void WriteULong(this EtfMemory stream, ulong value)
