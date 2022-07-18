@@ -1,6 +1,6 @@
 namespace EtfDotNet;
 
-public class EtfType
+public abstract class EtfType
 {
     
 }
