@@ -6,34 +6,30 @@ namespace EtfDotNet;
 
 internal static class EtfDecoder
 {
-    public static EtfType DecodeType(Stream input)
+    public static EtfContainer DecodeType(EtfMemory input)
     {
         var typeId = input.ReadConstant();
         if (typeId == EtfConstants.SmallIntegerExt)
         {
-            return new EtfSmallInteger((byte) input.ReadByte());
+            return input.ReadContainer(1, typeId);
         }
         if (typeId == EtfConstants.IntegerExt)
         {
-            return new EtfInteger((int) input.ReadUInt());
+            return input.ReadContainer(4, typeId);
         }
         if (typeId == EtfConstants.StringExt)
         {
             var len = input.ReadUShort();
-            var bytes = new byte[len];
-            if (input.Read(bytes) != len)
-            {
-                throw new IOException("Not everything has been read from the stream");
-            }
-            return new EtfString(Encoding.Latin1.GetString(bytes));
+            return input.ReadContainer(len, typeId);
         }
         if (typeId == EtfConstants.AtomExt)
         {
-            return DecodeAtom(input);
+            var len = input.ReadUShort();
+            return input.ReadContainer(len, typeId);
         }
         if (typeId == EtfConstants.NilExt)
         {
-            return new EtfList();
+            return EtfContainer.Nil;
         }
         if (typeId == EtfConstants.ListExt)
         {
@@ -41,11 +37,13 @@ internal static class EtfDecoder
         }
         if (typeId == EtfConstants.BinaryExt)
         {
-            return DecodeBinary(input);
+            var len = input.ReadUInt();
+            return input.ReadContainer((int)len, typeId);
         }
         if (typeId == EtfConstants.SmallBigExt)
         {
-            return DecodeSmallBig(input);
+            var len = input.ReadByte();
+            return input.ReadContainer(len + 4, typeId);
         }
         if (typeId == EtfConstants.MapExt)
         {
@@ -54,18 +52,7 @@ internal static class EtfDecoder
         throw new EtfException($"Unknown type {typeId}");
     }
 
-    public static EtfAtom DecodeAtom(Stream input)
-    {
-        var len = input.ReadUShort();
-        var latin1Text = new byte[len];
-        if (input.Read(latin1Text) != len)
-        {
-            throw new IOException("Not everything has been read from the stream");
-        }
-        return new EtfAtom(Encoding.Latin1.GetString(latin1Text));
-    }
-
-    public static EtfList DecodeList(Stream input)
+    public static EtfContainer DecodeList(EtfMemory input)
     {
         var length = input.ReadUInt();
         var list = new EtfList();
@@ -77,34 +64,10 @@ internal static class EtfDecoder
         {
             throw new EtfException("Expected NilExt");
         }
-        return list;
+        return EtfContainer.AsContainer(list, EtfConstants.ListExt);
     }
 
-    public static EtfBinary DecodeBinary(Stream input)
-    {
-        var len = input.ReadUInt();
-        var bytes = new byte[len];
-        if (input.Read(bytes) != len)
-        {
-            throw new IOException("Not everything has been read from the stream");
-        }
-        return new EtfBinary(bytes);
-    }
-
-    public static EtfBig DecodeSmallBig(Stream input)
-    {
-        var len = input.ReadByte();
-        var sign = input.ReadByte();
-        var num = new BigInteger();
-        for (var i = 0; i < len; i++)
-        {
-            num += input.ReadByte() * BigInteger.Pow(256, i);
-        }
-        if (sign == 1) num = -num;
-        return new EtfBig(num);
-    }
-
-    public static EtfMap DecodeMap(Stream input)
+    public static EtfContainer DecodeMap(EtfMemory input)
     {
         var kvLength = input.ReadUInt();
         var map = new EtfMap();
@@ -112,8 +75,8 @@ internal static class EtfDecoder
         {
             var key = DecodeType(input);
             var value = DecodeType(input);
-            map[key] = value;
+            map.Add((key, value));
         }
-        return map;
+        return EtfContainer.AsContainer(map, EtfConstants.MapExt);
     }
 }

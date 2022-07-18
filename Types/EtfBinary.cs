@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 
 namespace EtfDotNet.Types;
 
-public struct EtfBinary : EtfType
+public struct EtfBinary : IEtfType
 {
     public readonly ReadOnlyMemory<byte> Bytes;
     

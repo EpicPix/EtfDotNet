@@ -1,6 +1,6 @@
 namespace EtfDotNet.Types;
 
-public record struct EtfString(string Value) : EtfType
+public record struct EtfString(string Value) : IEtfType
 {
     public static implicit operator EtfString(string v)
     {
