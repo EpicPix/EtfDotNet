@@ -33,15 +33,15 @@ internal static class EtfEncoder
         }
         if (type is EtfBig big)
         {
-            var sign = big.Number.Sign == decimal.One;
+            var sign = big.Number.Sign == decimal.Zero;
             var bytes = sign ? (-big.Number).ToByteArray() : big.Number.ToByteArray();
             if (bytes.Length > 255)
             {
                 throw new EtfException("Cannot encode number with more than 255 bytes");
             }
             output.WriteConstant(EtfConstants.SmallBigExt);
-            output.WriteByte((byte) (sign ? 1 : 0));
             output.WriteByte((byte) bytes.Length);
+            output.WriteByte((byte) (sign ? 1 : 0));
             output.Write(bytes);
             return;
         }
