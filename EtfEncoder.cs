@@ -19,6 +19,18 @@ internal static class EtfEncoder
             output.WriteUInt((uint) integer.Value);
             return;
         }
+        if (type is EtfString str)
+        {
+            output.WriteConstant(EtfConstants.StringExt);
+            var bytes = Encoding.Latin1.GetBytes(str.Value);
+            if (bytes.Length > ushort.MaxValue)
+            {
+                throw new EtfException($"Cannot encode EtfString longer than {ushort.MaxValue} bytes");
+            }
+            output.WriteUShort((ushort) bytes.Length);
+            output.Write(bytes);
+            return;
+        }
         if (type is EtfAtom atom)
         {
             output.WriteConstant(EtfConstants.AtomExt);

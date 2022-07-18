@@ -17,6 +17,16 @@ internal static class EtfDecoder
         {
             return new EtfInteger((int) input.ReadUInt());
         }
+        if (typeId == EtfConstants.StringExt)
+        {
+            var len = input.ReadUShort();
+            var bytes = new byte[len];
+            if (input.Read(bytes) != len)
+            {
+                throw new IOException("Not everything has been read from the stream");
+            }
+            return new EtfString(Encoding.Latin1.GetString(bytes));
+        }
         if (typeId == EtfConstants.AtomExt)
         {
             return DecodeAtom(input);
