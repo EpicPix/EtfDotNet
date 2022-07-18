@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace EtfDotNet.Types;
 
-public class EtfBig : EtfType
+public struct EtfBig : EtfType
 {
     public readonly BigInteger Number;
 

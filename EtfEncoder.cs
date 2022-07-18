@@ -101,10 +101,10 @@ internal static class EtfEncoder
     private static void EncodeBinary(Stream output, EtfBinary binary)
     {
         var bytes = binary.Bytes;
-        output.WriteUInt((uint) bytes.Count);
-        for (var i = 0; i < bytes.Count; i++)
+        output.WriteUInt((uint) bytes.Length);
+        for (var i = 0; i < bytes.Length; i++)
         {
-            output.WriteByte(bytes[i]);
+            output.WriteByte(bytes.Span[i]);
         }
     }
     
