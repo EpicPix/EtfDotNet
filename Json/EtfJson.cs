@@ -6,7 +6,7 @@ namespace EtfDotNet.Json;
 
 public static class EtfJson
 {
-    public static JsonNode ConvertEtfToJson(EtfType type)
+    public static JsonNode ConvertEtfToJson(EtfContainer type)
     {
         var node = EtfToJsonConverter.Convert(type);
         if (node is null)
@@ -16,13 +16,9 @@ public static class EtfJson
         return node;
     }
     
-    public static EtfType ConvertJsonToEtf(JsonNode node)
+    public static EtfContainer ConvertJsonToEtf(JsonNode node)
     {
         var type = JsonToEtfConverter.Convert(node);
-        if (type is null)
-        {
-            throw new JsonException("Node is null");
-        }
         return type;
     }
 }
