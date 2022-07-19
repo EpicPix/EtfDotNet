@@ -110,6 +110,6 @@ public class SmallBigContainerTests
     {
         Assert.Throws<EtfException>(() => (EtfContainer)BigInteger.Pow(2, 1024 * 8));
         Assert.Throws<EtfException>(() => (EtfContainer)BigInteger.Pow(2, 256 * 8));
-        Assert.NotNull(() => (EtfContainer)BigInteger.Pow(2, 255 * 8));
+        Assert.IsType<EtfContainer>((EtfContainer)BigInteger.Pow(2, 254 * 8));
     }
 }
