@@ -2,7 +2,7 @@ using System.Buffers;
 
 namespace EtfDotNet;
 
-internal static class EtfExtensions
+public static class EtfExtensions
 {
 
     public static EtfConstants ReadConstant(this EtfMemory stream)
