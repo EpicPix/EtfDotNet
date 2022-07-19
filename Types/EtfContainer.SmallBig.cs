@@ -8,7 +8,7 @@ public partial struct EtfContainer
     public static implicit operator EtfContainer(BigInteger big)
     {
         var sign = big.Sign == decimal.MinusOne;
-        var bytes = sign ? (-big).ToByteArray() : big.ToByteArray();
+        var bytes = sign ? (-big).ToByteArray(true) : big.ToByteArray(true);
         if (bytes.Length > 255)
         {
             throw new EtfException("Cannot encode number with more than 255 bytes");
