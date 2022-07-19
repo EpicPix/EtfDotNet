@@ -22,7 +22,7 @@ public class EtfMemory
         return new EtfMemory()
         {
             _streamSource = source,
-            _isStreamed = false
+            _isStreamed = true
         };
     }
 
