@@ -5,7 +5,7 @@ using EtfDotNet.Types;
 
 namespace EtfDotNet;
 
-internal static class EtfEncoder
+public static class EtfEncoder
 {
 
     public static void EncodeType(EtfContainer container, EtfMemory output)

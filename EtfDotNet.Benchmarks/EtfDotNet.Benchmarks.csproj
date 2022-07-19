@@ -5,7 +5,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>EtfDotNet.Tests</RootNamespace>
+        <RootNamespace>EtfDotNet.Benchmarks</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
