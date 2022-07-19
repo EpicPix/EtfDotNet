@@ -45,4 +45,6 @@ public class EtfMap : List<(EtfContainer, EtfContainer)>, IEtfComplex
             container.Item2.Dispose();
         }
     }
+    
+    public void Add(EtfContainer key, EtfContainer value) => Add((key, value));
 }
