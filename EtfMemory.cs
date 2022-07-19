@@ -75,7 +75,7 @@ public class EtfMemory
         {
             int readCount = Read(destination.Slice(destination.Offset + offset, destination.Count - offset));
             if (readCount == 0)
-                throw new EndOfStreamException("End of the stream reached.");
+                throw new IndexOutOfRangeException("The specifed data length will exceed the bounded capacity of the memory segment.");
             offset += readCount;
         }
     }
