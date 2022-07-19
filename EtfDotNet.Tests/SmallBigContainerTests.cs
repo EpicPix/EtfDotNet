@@ -105,4 +105,11 @@ public class SmallBigContainerTests
         Assert.Equal(6, EtfFormat.GetPackedSize((BigInteger) (-2048)));
     }
     
+    [Fact]
+    public void SmallBigSizeBoundTest()
+    {
+        Assert.Throws<EtfException>(() => (EtfContainer)BigInteger.Pow(2, 1024 * 8));
+        Assert.Throws<EtfException>(() => (EtfContainer)BigInteger.Pow(2, 256 * 8));
+        Assert.NotNull(() => (EtfContainer)BigInteger.Pow(2, 255 * 8));
+    }
 }
