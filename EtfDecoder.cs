@@ -1,10 +1,8 @@
-using System.Numerics;
-using System.Text;
 using EtfDotNet.Types;
 
 namespace EtfDotNet;
 
-internal static class EtfDecoder
+public static class EtfDecoder
 {
     public static EtfContainer DecodeType(EtfMemory input)
     {

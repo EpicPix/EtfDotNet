@@ -17,18 +17,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="EtfDotNet.Tests\**" />
       <Compile Remove="EtfDotNet.Benchmarks\**" />
+      <Compile Remove="EtfDotNet.Tests\**" />
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Remove="EtfDotNet.Tests\**" />
       <EmbeddedResource Remove="EtfDotNet.Benchmarks\**" />
+      <EmbeddedResource Remove="EtfDotNet.Tests\**" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="EtfDotNet.Tests\**" />
       <None Remove="EtfDotNet.Benchmarks\**" />
+      <None Remove="EtfDotNet.Tests\**" />
     </ItemGroup>
 
 </Project>

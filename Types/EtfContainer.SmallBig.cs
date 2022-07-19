@@ -7,7 +7,7 @@ public partial struct EtfContainer
 {
     public static implicit operator EtfContainer(BigInteger big)
     {
-        var sign = big.Sign == decimal.Zero;
+        var sign = big.Sign == decimal.MinusOne;
         var bytes = sign ? (-big).ToByteArray() : big.ToByteArray();
         if (bytes.Length > 255)
         {
@@ -24,7 +24,7 @@ public partial struct EtfContainer
     {
         v.EnforceIsType(EtfConstants.SmallBigExt);
         var sign = v.ContainedData[0];
-        var num = new BigInteger(v.ContainedData.Slice(1));
+        var num = new BigInteger(v.ContainedData.Slice(1), isUnsigned: true);
         if (sign == 1) num = -num;
         return num;
     }
