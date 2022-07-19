@@ -14,7 +14,7 @@ public class HeaderTests
     [Fact]
     public void UnpackValidVersionTest()
     {
-        EtfFormat.Unpack(new[] { (byte) EtfConstants.VersionNumber, (byte) EtfConstants.NilExt });
+        EtfFormat.Unpack(new[] { (byte) EtfConstants.VersionNumber, (byte) EtfConstants.NilExt }).Dispose();
     }
     
     [Fact]

@@ -8,7 +8,7 @@ public class IntegerContainerTests
     [Fact]
     public void EtfToIntegerTest()
     {
-        var atom = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.IntegerExt, 0x10, 0x20, 0x30, 0x40}));
+        using var atom = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.IntegerExt, 0x10, 0x20, 0x30, 0x40}));
         Assert.Equal(EtfConstants.IntegerExt, atom.Type);
         Assert.Equal(0x10203040, (int) atom);
     }
@@ -16,7 +16,7 @@ public class IntegerContainerTests
     [Fact]
     public void IntegerToEtfTest()
     {
-        var atom = (EtfContainer) 0x51827364;
+        using var atom = (EtfContainer) 0x51827364;
         Assert.Equal(EtfConstants.IntegerExt, atom.Type);
         Assert.Equal(0x51827364, (int) atom);
         Assert.Equal(5, EtfEncoder.CalculateTypeSize(atom));

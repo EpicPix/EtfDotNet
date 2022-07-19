@@ -9,33 +9,33 @@ public class SmallBigContainerTests
     [Fact]
     public void EtfToSmallBigPositiveTest()
     {
-        var atom = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.SmallBigExt, 1, 0, 129}));
-        Assert.Equal(EtfConstants.SmallBigExt, atom.Type);
-        Assert.Equal(new BigInteger(129), (BigInteger) atom);
+        using var container = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.SmallBigExt, 1, 0, 129}));
+        Assert.Equal(EtfConstants.SmallBigExt, container.Type);
+        Assert.Equal(new BigInteger(129), (BigInteger) container);
     }
     
     [Fact]
     public void EtfToSmallBigNegativeTest()
     {
-        var atom = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.SmallBigExt, 1, 1, 129}));
-        Assert.Equal(EtfConstants.SmallBigExt, atom.Type);
-        Assert.Equal(new BigInteger(-129), (BigInteger) atom);
+        using var container = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.SmallBigExt, 1, 1, 129}));
+        Assert.Equal(EtfConstants.SmallBigExt, container.Type);
+        Assert.Equal(new BigInteger(-129), (BigInteger) container);
     }
     
     [Fact]
     public void EtfToSmallBigPositiveMultiByteTest()
     {
-        var atom = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.SmallBigExt, 3, 0, 129, 16, 1}));
-        Assert.Equal(EtfConstants.SmallBigExt, atom.Type);
-        Assert.Equal(new BigInteger(69761), (BigInteger) atom);
+        using var container = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.SmallBigExt, 3, 0, 129, 16, 1}));
+        Assert.Equal(EtfConstants.SmallBigExt, container.Type);
+        Assert.Equal(new BigInteger(69761), (BigInteger) container);
     }
     
     [Fact]
     public void EtfToSmallBigNegativeMultiByteTest()
     {
-        var atom = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.SmallBigExt, 3, 1, 129, 16, 1}));
-        Assert.Equal(EtfConstants.SmallBigExt, atom.Type);
-        Assert.Equal(new BigInteger(-69761), (BigInteger) atom);
+        using var container = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.SmallBigExt, 3, 1, 129, 16, 1}));
+        Assert.Equal(EtfConstants.SmallBigExt, container.Type);
+        Assert.Equal(new BigInteger(-69761), (BigInteger) container);
     }
     
     
@@ -47,12 +47,12 @@ public class SmallBigContainerTests
     [InlineData(99)]
     public void SmallBigToEtfPositiveTest(byte number)
     {
-        var atom = (EtfContainer) new BigInteger(number);
-        Assert.Equal(EtfConstants.SmallBigExt, atom.Type);
-        Assert.Equal(new BigInteger(number), (BigInteger) atom);
-        Assert.Equal(4, EtfEncoder.CalculateTypeSize(atom));
+        using var container = (EtfContainer) new BigInteger(number);
+        Assert.Equal(EtfConstants.SmallBigExt, container.Type);
+        Assert.Equal(new BigInteger(number), (BigInteger) container);
+        Assert.Equal(4, EtfEncoder.CalculateTypeSize(container));
         var arr = new byte[4];
-        EtfEncoder.EncodeType(atom, EtfMemory.FromArray(arr));
+        EtfEncoder.EncodeType(container, EtfMemory.FromArray(arr));
         Assert.True(arr.SequenceEqual(new byte[]{(byte) EtfConstants.SmallBigExt, 1, 0, number}));
     }
     
@@ -61,36 +61,36 @@ public class SmallBigContainerTests
     [InlineData(1)]
     public void SmallBigToEtfNegativeTest(byte number)
     {
-        var atom = (EtfContainer) new BigInteger(-number);
-        Assert.Equal(EtfConstants.SmallBigExt, atom.Type);
-        Assert.Equal(new BigInteger(-number), (BigInteger) atom);
-        Assert.Equal(4, EtfEncoder.CalculateTypeSize(atom));
+        using var container = (EtfContainer) new BigInteger(-number);
+        Assert.Equal(EtfConstants.SmallBigExt, container.Type);
+        Assert.Equal(new BigInteger(-number), (BigInteger) container);
+        Assert.Equal(4, EtfEncoder.CalculateTypeSize(container));
         var arr = new byte[4];
-        EtfEncoder.EncodeType(atom, EtfMemory.FromArray(arr));
+        EtfEncoder.EncodeType(container, EtfMemory.FromArray(arr));
         Assert.True(arr.SequenceEqual(new byte[]{(byte) EtfConstants.SmallBigExt, 1, 1, number}));
     }
     
     [Fact]
     public void SmallBigToEtfPositiveMultiByteTest()
     {
-        var atom = (EtfContainer) new BigInteger(69761);
-        Assert.Equal(EtfConstants.SmallBigExt, atom.Type);
-        Assert.Equal(new BigInteger(69761), (BigInteger) atom);
-        Assert.Equal(6, EtfEncoder.CalculateTypeSize(atom));
+        using var container = (EtfContainer) new BigInteger(69761);
+        Assert.Equal(EtfConstants.SmallBigExt, container.Type);
+        Assert.Equal(new BigInteger(69761), (BigInteger) container);
+        Assert.Equal(6, EtfEncoder.CalculateTypeSize(container));
         var arr = new byte[6];
-        EtfEncoder.EncodeType(atom, EtfMemory.FromArray(arr));
+        EtfEncoder.EncodeType(container, EtfMemory.FromArray(arr));
         Assert.True(arr.SequenceEqual(new byte[]{(byte) EtfConstants.SmallBigExt, 3, 0, 129, 16, 1}));
     }
     
     [Fact]
     public void SmallBigToEtfNegativeMultiByteTest()
     {
-        var atom = (EtfContainer) new BigInteger(-69761);
-        Assert.Equal(EtfConstants.SmallBigExt, atom.Type);
-        Assert.Equal(new BigInteger(-69761), (BigInteger) atom);
-        Assert.Equal(6, EtfEncoder.CalculateTypeSize(atom));
+        var container = (EtfContainer) new BigInteger(-69761);
+        Assert.Equal(EtfConstants.SmallBigExt, container.Type);
+        Assert.Equal(new BigInteger(-69761), (BigInteger) container);
+        Assert.Equal(6, EtfEncoder.CalculateTypeSize(container));
         var arr = new byte[6];
-        EtfEncoder.EncodeType(atom, EtfMemory.FromArray(arr));
+        EtfEncoder.EncodeType(container, EtfMemory.FromArray(arr));
         Assert.True(arr.SequenceEqual(new byte[]{(byte) EtfConstants.SmallBigExt, 3, 1, 129, 16, 1}));
     }
 

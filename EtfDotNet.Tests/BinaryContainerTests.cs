@@ -9,7 +9,7 @@ public class BigContainerTests
     [Fact]
     public void EtfToBinaryTest()
     {
-        var atom = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.BinaryExt, 0, 0, 0, 4, 0, 1, 2, 3}));
+        using var atom = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.BinaryExt, 0, 0, 0, 4, 0, 1, 2, 3}));
         Assert.Equal(EtfConstants.BinaryExt, atom.Type);
         Assert.True(((ArraySegment<byte>) atom).SequenceEqual(new byte[]{0, 1, 2, 3}));
     }
@@ -17,7 +17,7 @@ public class BigContainerTests
     [Fact]
     public void BinaryToEtfTest()
     {
-        var atom = (EtfContainer) new byte[] {0, 1, 2, 3, 4, 5, 6, 7};
+        using var atom = (EtfContainer) new byte[] {0, 1, 2, 3, 4, 5, 6, 7};
         Assert.Equal(EtfConstants.BinaryExt, atom.Type);
         Assert.True(((ArraySegment<byte>) atom).SequenceEqual(new byte[]{0, 1, 2, 3, 4, 5, 6, 7}));
         Assert.Equal(13, EtfEncoder.CalculateTypeSize(atom));

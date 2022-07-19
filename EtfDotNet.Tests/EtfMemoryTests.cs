@@ -23,7 +23,7 @@ public class EtfMemoryTests
     public void ReadStreamPositionTest()
     {
         var bytes = RandomNumberGenerator.GetBytes(1 << 13);
-        var rand = new MemoryStream(bytes);
+        using var rand = new MemoryStream(bytes);
         var mem = EtfMemory.FromStream(rand);
         var buf = new byte[4096];
         mem.ReadExactly(buf);
@@ -41,7 +41,7 @@ public class EtfMemoryTests
     public void ReadSliceStreamTest()
     {
         var bytes = RandomNumberGenerator.GetBytes(1 << 13);
-        var rand = new MemoryStream(bytes);
+        using var rand = new MemoryStream(bytes);
         var mem = EtfMemory.FromStream(rand);
         Assert.Throws<InvalidOperationException>(() => mem.ReadSlice(4096));
     }
@@ -62,7 +62,7 @@ public class EtfMemoryTests
     public void WriteStreamTest()
     {
         var src = RandomNumberGenerator.GetBytes(1 << 13);
-        var dest = new MemoryStream(1 << 13);
+        using var dest = new MemoryStream(1 << 13);
         var mem = EtfMemory.FromStream(dest);
         mem.Write(src);
         mem.WriteByte(1);
@@ -76,8 +76,9 @@ public class EtfMemoryTests
     [Fact]
     public void ReadContainerTest()
     {
-        var data = new MemoryStream(EtfFormat.Pack("hello"));
-        string result = EtfFormat.Unpack(EtfMemory.FromStream(data));
+        using var data = new MemoryStream(EtfFormat.Pack("hello"));
+        using var unpacked = EtfFormat.Unpack(EtfMemory.FromStream(data));
+        string result = unpacked;
         Assert.Equal("hello", result);
     }
 }

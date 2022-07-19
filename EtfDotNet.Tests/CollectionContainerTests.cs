@@ -16,7 +16,7 @@ public class CollectionContainerTests
     public void CorrectTypeToListTest()
     {
         var start = new EtfList();
-        EtfContainer list = start;
+        using EtfContainer list = start;
         Assert.Equal(start, list.AsList());
     }
 
@@ -30,7 +30,7 @@ public class CollectionContainerTests
     public void CorrectTypeToMapTest()
     {
         var start = new EtfMap();
-        EtfContainer list = start;
+        using EtfContainer list = start;
         Assert.Equal(start, list.AsMap());
     }
     
