@@ -39,6 +39,11 @@ public static class EtfDecoder
             var len = input.ReadUShort();
             return input.ReadContainer(len, typeId);
         }
+        if (typeId == EtfConstants.SmallAtomExt)
+        {
+            var len = input.ReadByte();
+            return input.ReadContainer(len, EtfConstants.AtomExt);
+        }
         if (typeId == EtfConstants.SmallTupleExt)
         {
             return DecodeTuple(input, typeId, (uint) input.ReadByte());
