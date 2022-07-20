@@ -48,6 +48,10 @@ internal static class EtfToJsonConverter
         {
             return JsonValue.Create((int)type);
         }
+        if (type.Type == EtfConstants.NewFloatExt)
+        {
+            return JsonValue.Create((double)type);
+        }
         if (type.Type == EtfConstants.StringExt)
         {
             return JsonValue.Create((string)type);

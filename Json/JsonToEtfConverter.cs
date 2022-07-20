@@ -24,6 +24,10 @@ internal static class JsonToEtfConverter
             {
                 return Encoding.UTF8.GetBytes(vstring);
             }
+            if (val.TryGetValue<double>(out var vdouble))
+            {
+                return vdouble;
+            }
             var v = val.GetValue<object>();
             if(long.TryParse(v.ToString(), out var vlong))
             {

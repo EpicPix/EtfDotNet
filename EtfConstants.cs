@@ -4,6 +4,7 @@ public enum EtfConstants : byte
 {
     VersionNumber = 131,
     
+    NewFloatExt =  70,
     SmallIntegerExt = 97,
     IntegerExt = 98,
     AtomExt = 100,

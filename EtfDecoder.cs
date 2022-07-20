@@ -7,6 +7,10 @@ public static class EtfDecoder
     public static EtfContainer DecodeType(EtfMemory input)
     {
         var typeId = input.ReadConstant();
+        if (typeId == EtfConstants.NewFloatExt)
+        {
+            return input.ReadContainer(8, typeId);
+        }
         if (typeId == EtfConstants.SmallIntegerExt)
         {
             return input.ReadContainer(1, typeId);

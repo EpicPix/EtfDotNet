@@ -33,8 +33,7 @@ public static class EtfEncoder
                 output.Write(buf);
                 break;
              // raw byte types
-             case EtfConstants.IntegerExt or 
-                 EtfConstants.SmallIntegerExt:
+             case EtfConstants.NewFloatExt or EtfConstants.IntegerExt or EtfConstants.SmallIntegerExt:
                  output.WriteConstant(type);
                  output.Write(buf);
                  break;
@@ -80,8 +79,7 @@ public static class EtfEncoder
                 length = 1 + 4 + buf.Count;
                 break;
             // raw byte types
-            case EtfConstants.IntegerExt or 
-                EtfConstants.SmallIntegerExt:
+            case EtfConstants.NewFloatExt or EtfConstants.IntegerExt or EtfConstants.SmallIntegerExt:
                 length = 1 + buf.Count;
                 break;
             // complex types
