@@ -30,7 +30,7 @@ internal static class EtfToJsonConverter
             }
             return arr;
         }
-        if (type.Type == EtfConstants.SmallTupleExt)
+        if (type.Type is EtfConstants.SmallTupleExt or EtfConstants.LargeTupleExt)
         {
             var arr = new JsonArray();
             foreach (var v in type.AsTuple())
@@ -41,7 +41,7 @@ internal static class EtfToJsonConverter
         }
         if (type.Type == EtfConstants.NilExt)
         {
-            return new JsonArray();;
+            return new JsonArray();
         }
         if (type.Type == EtfConstants.AtomExt)
         {

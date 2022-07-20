@@ -25,7 +25,7 @@ public class EtfTuple : IReadOnlyList<EtfContainer>, IEtfComplex
     
     public int GetSize()
     {
-        int size = 4; // uint length (count)
+        int size = _array.Length > 255 ? 4 : 1; // uint length (count)
         foreach (var container in _array)
         {
             size += container.GetSize();
@@ -35,7 +35,7 @@ public class EtfTuple : IReadOnlyList<EtfContainer>, IEtfComplex
     
     public int GetSerializedSize()
     {
-        int size = 4; // uint length (count)
+        int size = _array.Length > 255 ? 4 : 1; // uint length (count)
         foreach (var container in _array)
         {
             size += EtfEncoder.CalculateTypeSize(container);
@@ -45,7 +45,13 @@ public class EtfTuple : IReadOnlyList<EtfContainer>, IEtfComplex
 
     public void Serialize(EtfMemory memory)
     {
-        memory.WriteUInt((uint)Count);
+        if (_array.Length > 255)
+        {
+            memory.WriteUInt((uint) Count);
+        } else
+        {
+            memory.WriteByte((byte) Count);
+        }
         foreach (var container in _array)
         {
             EtfEncoder.EncodeType(container, memory);

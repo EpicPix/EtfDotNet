@@ -43,6 +43,10 @@ public static class EtfDecoder
         {
             return DecodeTuple(input, typeId, (uint) input.ReadByte());
         }
+        if (typeId == EtfConstants.LargeTupleExt)
+        {
+            return DecodeTuple(input, typeId, input.ReadUInt());
+        }
         if (typeId == EtfConstants.NilExt)
         {
             return EtfContainer.Nil;

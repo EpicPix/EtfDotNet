@@ -6,6 +6,10 @@ public partial struct EtfContainer
 {
     public EtfTuple AsTuple()
     {
+        if (Type == EtfConstants.LargeTupleExt)
+        {
+            return (EtfTuple) _complexData!;
+        }
         EnforceIsType(EtfConstants.SmallTupleExt);
         return (EtfTuple)_complexData!;
     }
@@ -14,7 +18,7 @@ public partial struct EtfContainer
     {
         if (tuple.Count > 255)
         {
-            throw new EtfException("LargeTupleExt not implemented yet");
+            return AsContainer(tuple, EtfConstants.LargeTupleExt);
         }
         return AsContainer(tuple, EtfConstants.SmallTupleExt);
     }
