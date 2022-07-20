@@ -4,6 +4,7 @@ namespace EtfDotNet.Types;
 
 public class EtfTuple : IReadOnlyList<EtfContainer>, IEtfComplex
 {
+    private static readonly EtfContainer NilAtom = EtfContainer.FromAtom("nil");
     private readonly EtfContainer[] _array;
 
     public int Count => _array.Length;
@@ -21,6 +22,10 @@ public class EtfTuple : IReadOnlyList<EtfContainer>, IEtfComplex
     public EtfTuple(uint length)
     {
         _array = new EtfContainer[length];
+        for (var i = 0u; i < length; i++)
+        {
+            _array[i] = NilAtom;
+        }
     }
     
     public int GetSize()
