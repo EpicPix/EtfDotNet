@@ -43,7 +43,7 @@ public class TupleContainerTests
     public void EtfToTupleLargeOneTest()
     {
         using var atom = EtfDecoder.DecodeType(EtfMemory.FromArray(new byte[]{(byte) EtfConstants.LargeTupleExt, 0x00, 0x00, 0x00, 0x01, (byte) EtfConstants.NilExt}));
-        Assert.Equal(EtfConstants.SmallTupleExt, atom.Type);
+        Assert.Equal(EtfConstants.LargeTupleExt, atom.Type);
         var tuple = atom.AsTuple();
         Assert.Single(tuple);
         Assert.Equal(EtfConstants.NilExt, tuple[0].Type);
