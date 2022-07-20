@@ -39,6 +39,10 @@ public static class EtfDecoder
             var len = input.ReadUShort();
             return input.ReadContainer(len, typeId);
         }
+        if (typeId == EtfConstants.SmallTupleExt)
+        {
+            return DecodeTuple(input, typeId, (uint) input.ReadByte());
+        }
         if (typeId == EtfConstants.NilExt)
         {
             return EtfContainer.Nil;
@@ -52,6 +56,16 @@ public static class EtfDecoder
             return DecodeMap(input);
         }
         throw new EtfException($"Unknown type {typeId}");
+    }
+
+    public static EtfContainer DecodeTuple(EtfMemory input, EtfConstants typeId, uint length)
+    {
+        var tuple = new EtfTuple(length);
+        for (var i = 0u; i < length; i++)
+        {
+            tuple[i] = DecodeType(input);
+        }
+        return EtfContainer.AsContainer(tuple, typeId);
     }
 
     public static EtfContainer DecodeList(EtfMemory input)

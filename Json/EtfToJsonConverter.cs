@@ -30,6 +30,15 @@ internal static class EtfToJsonConverter
             }
             return arr;
         }
+        if (type.Type == EtfConstants.SmallTupleExt)
+        {
+            var arr = new JsonArray();
+            foreach (var v in type.AsTuple())
+            {
+                arr.Add(Convert(v));
+            }
+            return arr;
+        }
         if (type.Type == EtfConstants.NilExt)
         {
             return new JsonArray();;

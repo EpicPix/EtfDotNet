@@ -8,6 +8,7 @@ public enum EtfConstants : byte
     SmallIntegerExt = 97,
     IntegerExt = 98,
     AtomExt = 100,
+    SmallTupleExt = 104,
     NilExt = 106,
     StringExt = 107,
     ListExt = 108,

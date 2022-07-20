@@ -1,6 +1,4 @@
-using System.Buffers;
 using System.Diagnostics.Contracts;
-using System.Text;
 using EtfDotNet.Types;
 
 namespace EtfDotNet;
@@ -38,7 +36,7 @@ public static class EtfEncoder
                  output.Write(buf);
                  break;
              // complex types
-            case EtfConstants.MapExt or EtfConstants.ListExt:
+            case EtfConstants.SmallTupleExt or EtfConstants.MapExt or EtfConstants.ListExt:
                 if (type == EtfConstants.ListExt && container.AsList().Count == 0)
                 {
                     output.WriteConstant(EtfConstants.NilExt);
@@ -83,7 +81,7 @@ public static class EtfEncoder
                 length = 1 + buf.Count;
                 break;
             // complex types
-            case EtfConstants.MapExt or EtfConstants.ListExt:
+            case EtfConstants.SmallTupleExt or EtfConstants.MapExt or EtfConstants.ListExt:
                 if (type == EtfConstants.ListExt && container.AsList().Count == 0)
                 {
                     length = 1;
