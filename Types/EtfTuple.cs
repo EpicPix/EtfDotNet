@@ -1,8 +1,9 @@
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace EtfDotNet.Types;
 
-public class EtfTuple : IReadOnlyList<EtfContainer>, IEtfComplex
+public class EtfTuple : IReadOnlyList<EtfContainer>, IEtfComplex, ITuple
 {
     private static readonly EtfContainer NilAtom = EtfContainer.FromAtom("nil");
     private readonly EtfContainer[] _array;
@@ -13,6 +14,10 @@ public class EtfTuple : IReadOnlyList<EtfContainer>, IEtfComplex
         get => _array[index];
         set => _array[index] = value;
     }
+    
+    object? ITuple.this[int index] { get => _array[index]; }
+
+    public int Length => _array.Length;
 
     public EtfContainer this[uint index] {
         get => _array[index];
