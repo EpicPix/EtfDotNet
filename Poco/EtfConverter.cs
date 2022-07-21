@@ -198,7 +198,49 @@ public class EtfConverter
             }
             throw new EtfException($"Cannot convert NewFloatExt to {t}");
         }
-        throw new NotImplementedException("TODO");
+        if (container.Type is EtfConstants.SmallTupleExt or EtfConstants.LargeTupleExt)
+        {
+            return ToTuple(container.AsTuple(), t);
+        }
+        throw new NotImplementedException("TODO: Add: NilExt ListExt MapExt");
+    }
+
+    internal static long GetTupleLength(Type t)
+    {
+        if (!typeof(ITuple).IsAssignableFrom(t)) return 1;
+        var amt = t.GenericTypeArguments.LongLength;
+        if (amt == 8)
+        {
+            return 7 + GetTupleLength(t.GenericTypeArguments[7]);
+        }
+        return amt;
+    }
+
+    internal static ITuple CreateTuple(Type t, object? value1 = null, object? value2 = null, object? value3 = null, object? value4 = null, object? value5 = null, object? value6 = null, object? value7 = null, object? value8 = null)
+    {
+        var length = GetTupleLength(t);
+        if (length == 1)
+        {
+            return (ITuple) Activator.CreateInstance(t, value1)!;
+        }
+        throw new NotImplementedException();
+    }
+
+    internal static ITuple ToTuple(EtfTuple tuple, Type t)
+    {
+        if (!typeof(ITuple).IsAssignableFrom(t))
+        {
+            throw new EtfException($"Cannot convert EtfTuple to {t}, expected an ITuple or a subclass of it");
+        }
+        var len = GetTupleLength(t);
+        if (len != tuple.Length)
+        {
+            throw new EtfException($"Tuple lengths are not the same, expected {tuple.Length} got {len}");
+        }
+        // some debug code
+        // Console.WriteLine(GetTupleLength(t));
+        // Console.WriteLine(CreateTuple(t, ToObject(tuple[0], t.GenericTypeArguments[0])));
+        throw new NotImplementedException();
     }
 }
 
@@ -208,6 +250,12 @@ internal static class ObjectExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     internal static object As(this object obj, Type type)
     {
-        return Convert.ChangeType(obj, type);
+        try
+        {
+            return Convert.ChangeType(obj, type);
+        } catch (FormatException)
+        {
+            throw new InvalidCastException($"Unable to cast object of type '{obj.GetType()}' to type '{type}'.");
+        }
     }
 }

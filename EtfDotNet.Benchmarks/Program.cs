@@ -12,8 +12,11 @@ using EtfDotNet.Types;
 // {
 //     {"its not a property", "abc"}
 // };
-var test = (EtfContainer) (byte) 0x81;
-var t = EtfConverter.ToObject<int>(test);
+var tuple = new EtfTuple(1);
+tuple[0] = "abc";
+// tuple[1] = "def";
+var test = (EtfContainer) tuple;
+var t = EtfConverter.ToObject<Tuple<int>>(test);
 Console.WriteLine($"{t} / {t.GetType()}");
 
 // Console.WriteLine(clz.ThisIsAField);
@@ -23,10 +26,10 @@ Console.WriteLine(EtfJson.ConvertEtfToJson(EtfConverter.ToEtf(new CustomClass())
 
 class CustomClass
 {
-    [EtfName("its not a property")]
-    public string ThisIsAField = "perhaps it isnt?";
-    [EtfIgnore]
-    public string NotSerialized = "im not here!";
+    public (string, string, string, string, string, string, string, string, string, string, string) v1 = ("", "", "", "", "", "", "", "", "", "", "");
+    public Tuple<string, string> v2;
+    public Tuple<string, string, string> v3;
+    public Tuple<string, string, string, string> v4;
 }
 
 // var data = new byte[]
