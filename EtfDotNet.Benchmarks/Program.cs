@@ -12,11 +12,25 @@ using EtfDotNet.Types;
 // {
 //     {"its not a property", "abc"}
 // };
-var tuple = new EtfTuple(1);
-tuple[0] = "abc";
-// tuple[1] = "def";
+var tuple = new EtfTuple(16);
+tuple[0] = "a";
+tuple[1] = "b";
+tuple[2] = "c";
+tuple[3] = "d";
+tuple[4] = "e";
+tuple[5] = "f";
+tuple[6] = "g";
+tuple[7] = "h";
+tuple[8] = "i";
+tuple[9] = "j";
+tuple[10] = "k";
+tuple[11] = "l";
+tuple[12] = "m";
+tuple[13] = "n";
+tuple[14] = "o";
+tuple[15] = "p";
 var test = (EtfContainer) tuple;
-var t = EtfConverter.ToObject<Tuple<int>>(test);
+var t = EtfConverter.ToObject<(string, string, string, string, string, string, string, string, string, string, string, string, string, string, string, string)>(test);
 Console.WriteLine($"{t} / {t.GetType()}");
 
 // Console.WriteLine(clz.ThisIsAField);

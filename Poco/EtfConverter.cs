@@ -131,6 +131,10 @@ public class EtfConverter
                 }
                 throw new EtfException("Cannot convert non-nullable object to null");
             }
+            if (!typeof(string).IsAssignableFrom(t))
+            {
+                throw new EtfException($"Cannot convert {t} to a string");
+            }
             return name.As(t);
         }
         if (container.Type == EtfConstants.BinaryExt)
@@ -219,11 +223,16 @@ public class EtfConverter
     internal static ITuple CreateTuple(Type t, object? value1 = null, object? value2 = null, object? value3 = null, object? value4 = null, object? value5 = null, object? value6 = null, object? value7 = null, object? value8 = null)
     {
         var length = GetTupleLength(t);
-        if (length == 1)
-        {
-            return (ITuple) Activator.CreateInstance(t, value1)!;
-        }
-        throw new NotImplementedException();
+        return length switch {
+            1 => (ITuple) Activator.CreateInstance(t, value1)!,
+            2 => (ITuple) Activator.CreateInstance(t, value1, value2)!,
+            3 => (ITuple) Activator.CreateInstance(t, value1, value2, value3)!,
+            4 => (ITuple) Activator.CreateInstance(t, value1, value2, value3, value4)!,
+            5 => (ITuple) Activator.CreateInstance(t, value1, value2, value3, value4, value5)!,
+            6 => (ITuple) Activator.CreateInstance(t, value1, value2, value3, value4, value5, value6)!,
+            7 => (ITuple) Activator.CreateInstance(t, value1, value2, value3, value4, value5, value6, value7)!,
+            _ => (ITuple) Activator.CreateInstance(t, value1, value2, value3, value4, value5, value6, value7, value8)!
+        };
     }
 
     internal static ITuple ToTuple(EtfTuple tuple, Type t)
@@ -237,9 +246,22 @@ public class EtfConverter
         {
             throw new EtfException($"Tuple lengths are not the same, expected {tuple.Length} got {len}");
         }
-        // some debug code
-        // Console.WriteLine(GetTupleLength(t));
-        // Console.WriteLine(CreateTuple(t, ToObject(tuple[0], t.GenericTypeArguments[0])));
+        var values = new object?[tuple.Length];
+        for (var i = 0; i < values.Length; i++)
+        {
+            var genericIndex = i;
+            var generic = t.GenericTypeArguments[genericIndex < 8 ? genericIndex : 7];
+            while (genericIndex >= 7)
+            {
+                genericIndex -= 7;
+                generic = generic.GenericTypeArguments[genericIndex < 8 ? genericIndex : 7];
+            }
+            values[i] = ToObject(tuple[i], generic);
+        }
+        // object? currentTuple = null;
+        // how
+        // Console.WriteLine(CreateTuple(t, values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], CreateTuple(values[8], values[9])));
+        // Console.WriteLine(CreateTuple(t, values[0], values[1], values[2]));
         throw new NotImplementedException();
     }
 }
