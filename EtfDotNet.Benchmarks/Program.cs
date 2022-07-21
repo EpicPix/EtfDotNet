@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿using System.Numerics;
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using EtfDotNet;
 using EtfDotNet.Json;
@@ -6,7 +7,19 @@ using EtfDotNet.Poco;
 using EtfDotNet.Types;
 
 
-Console.WriteLine(EtfJson.ConvertEtfToJson(EtfConverter.ToContainer(new CustomClass())));
+
+// var test = new EtfMap()
+// {
+//     {"its not a property", "abc"}
+// };
+var test = (EtfContainer) (byte) 0x81;
+var t = EtfConverter.ToObject<int>(test);
+Console.WriteLine($"{t} / {t.GetType()}");
+
+// Console.WriteLine(clz.ThisIsAField);
+
+
+Console.WriteLine(EtfJson.ConvertEtfToJson(EtfConverter.ToEtf(new CustomClass())));
 
 class CustomClass
 {
