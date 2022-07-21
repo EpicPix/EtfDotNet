@@ -103,95 +103,100 @@ public class EtfConverter
         return (name, ToEtf(value));
     }
 
-    // ReSharper disable RedundantCast
-    // ReSharper disable HeapView.BoxingAllocation
     public static T? ToObject<T>(EtfContainer container)
     {
-        if (typeof(EtfContainer).IsAssignableFrom(typeof(T)))
+        return (T?) ToObject(container, typeof(T));
+    }
+
+    // ReSharper disable RedundantCast
+    // ReSharper disable HeapView.BoxingAllocation
+    public static object? ToObject(EtfContainer container, Type t)
+    {
+        if (typeof(EtfContainer).IsAssignableFrom(t))
         {
-            return container.As<T>();
+            return container.As(t);
         }
         if (container.Type == EtfConstants.AtomExt)
         {
             var name = container.ToAtom();
             if (name is "true" or "false")
             {
-                return (name == "true").As<T>();
+                return (name == "true").As(t);
             }
             if (name is "nil")
             {
-                if (Nullable.GetUnderlyingType(typeof(T)) != null || !typeof(T).IsValueType)
+                if (Nullable.GetUnderlyingType(t) != null || !t.IsValueType)
                 {
-                    return default;
+                    return null;
                 }
                 throw new EtfException("Cannot convert non-nullable object to null");
             }
-            return name.As<T>();
+            return name.As(t);
         }
         if (container.Type == EtfConstants.BinaryExt)
         {
-            if (typeof(string).IsAssignableFrom(typeof(T)))
+            if (typeof(string).IsAssignableFrom(t))
             {
-                return Encoding.UTF8.GetString((ArraySegment<byte>) container).As<T>();
+                return Encoding.UTF8.GetString((ArraySegment<byte>) container).As(t);
             }
-            if (typeof(byte[]).IsAssignableFrom(typeof(T)))
+            if (typeof(byte[]).IsAssignableFrom(t))
             {
-                return ((ArraySegment<byte>) container).ToArray().As<T>();
+                return ((ArraySegment<byte>) container).ToArray().As(t);
             }
-            if (typeof(ArraySegment<byte>).IsAssignableFrom(typeof(T)))
+            if (typeof(ArraySegment<byte>).IsAssignableFrom(t))
             {
-                return ((ArraySegment<byte>) container).As<T>();
+                return ((ArraySegment<byte>) container).As(t);
             }
-            throw new EtfException($"Cannot convert BinaryExt to {typeof(T)}");
+            throw new EtfException($"Cannot convert BinaryExt to {t}");
         }
         if (container.Type == EtfConstants.StringExt)
         {
-            if (typeof(string).IsAssignableFrom(typeof(T)))
+            if (typeof(string).IsAssignableFrom(t))
             {
-                return ((string) container).As<T>();
+                return ((string) container).As(t);
             }
-            throw new EtfException($"Cannot convert StringExt to {typeof(T)}");
+            throw new EtfException($"Cannot convert StringExt to {t}");
         }
         if (container.Type == EtfConstants.SmallIntegerExt)
         {
             byte data = container;
-            if (typeof(byte)      .IsAssignableFrom(typeof(T))) return ((byte)       data).As<T>();
-            if (typeof(short)     .IsAssignableFrom(typeof(T))) return ((short)      data).As<T>();
-            if (typeof(ushort)    .IsAssignableFrom(typeof(T))) return ((ushort)     data).As<T>();
-            if (typeof(int)       .IsAssignableFrom(typeof(T))) return ((int)        data).As<T>();
-            if (typeof(uint)      .IsAssignableFrom(typeof(T))) return ((uint)       data).As<T>();
-            if (typeof(long)      .IsAssignableFrom(typeof(T))) return ((long)       data).As<T>();
-            if (typeof(ulong)     .IsAssignableFrom(typeof(T))) return ((ulong)      data).As<T>();
-            if (typeof(BigInteger).IsAssignableFrom(typeof(T))) return ((BigInteger) data).As<T>();
-            if (typeof(string)    .IsAssignableFrom(typeof(T))) return data.ToString()    .As<T>();
-            throw new EtfException($"Cannot convert SmallIntegerExt to {typeof(T)}");
+            if (typeof(byte)      .IsAssignableFrom(t)) return ((byte)       data).As(t);
+            if (typeof(short)     .IsAssignableFrom(t)) return ((short)      data).As(t);
+            if (typeof(ushort)    .IsAssignableFrom(t)) return ((ushort)     data).As(t);
+            if (typeof(int)       .IsAssignableFrom(t)) return ((int)        data).As(t);
+            if (typeof(uint)      .IsAssignableFrom(t)) return ((uint)       data).As(t);
+            if (typeof(long)      .IsAssignableFrom(t)) return ((long)       data).As(t);
+            if (typeof(ulong)     .IsAssignableFrom(t)) return ((ulong)      data).As(t);
+            if (typeof(BigInteger).IsAssignableFrom(t)) return ((BigInteger) data).As(t);
+            if (typeof(string)    .IsAssignableFrom(t)) return data.ToString()    .As(t);
+            throw new EtfException($"Cannot convert SmallIntegerExt to {t}");
         }
         if (container.Type == EtfConstants.IntegerExt)
         {
             int data = container;
-            if (typeof(int)       .IsAssignableFrom(typeof(T))) return ((int)        data).As<T>();
-            if (typeof(uint)      .IsAssignableFrom(typeof(T))) return ((uint)       data).As<T>();
-            if (typeof(long)      .IsAssignableFrom(typeof(T))) return ((long)       data).As<T>();
-            if (typeof(ulong)     .IsAssignableFrom(typeof(T))) return ((ulong)      data).As<T>();
-            if (typeof(BigInteger).IsAssignableFrom(typeof(T))) return ((BigInteger) data).As<T>();
-            if (typeof(string)    .IsAssignableFrom(typeof(T))) return data.ToString()    .As<T>();
-            throw new EtfException($"Cannot convert IntegerExt to {typeof(T)}");
+            if (typeof(int)       .IsAssignableFrom(t)) return ((int)        data).As(t);
+            if (typeof(uint)      .IsAssignableFrom(t)) return ((uint)       data).As(t);
+            if (typeof(long)      .IsAssignableFrom(t)) return ((long)       data).As(t);
+            if (typeof(ulong)     .IsAssignableFrom(t)) return ((ulong)      data).As(t);
+            if (typeof(BigInteger).IsAssignableFrom(t)) return ((BigInteger) data).As(t);
+            if (typeof(string)    .IsAssignableFrom(t)) return data.ToString()    .As(t);
+            throw new EtfException($"Cannot convert IntegerExt to {t}");
         }
         if (container.Type == EtfConstants.SmallBigExt)
         {
             BigInteger data = container;
-            if (typeof(BigInteger).IsAssignableFrom(typeof(T))) return ((BigInteger) data).As<T>();
-            if (typeof(string)    .IsAssignableFrom(typeof(T))) return data.ToString()    .As<T>();
-            throw new EtfException($"Cannot convert SmallBigExt to {typeof(T)}");
+            if (typeof(BigInteger).IsAssignableFrom(t)) return ((BigInteger) data).As(t);
+            if (typeof(string)    .IsAssignableFrom(t)) return data.ToString()    .As(t);
+            throw new EtfException($"Cannot convert SmallBigExt to {t}");
         }
         if (container.Type == EtfConstants.NewFloatExt)
         {
             double data = container;
-            if (typeof(double).IsAssignableFrom(typeof(T)))
+            if (typeof(double).IsAssignableFrom(t))
             {
-                return data.As<T>();
+                return data.As(t);
             }
-            throw new EtfException($"Cannot convert NewFloatExt to {typeof(T)}");
+            throw new EtfException($"Cannot convert NewFloatExt to {t}");
         }
         throw new NotImplementedException("TODO");
     }
@@ -201,8 +206,8 @@ internal static class ObjectExtensions
 {
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    internal static T As<T>(this object obj)
+    internal static object As(this object obj, Type type)
     {
-        return (T) obj;
+        return Convert.ChangeType(obj, type);
     }
 }
