@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections;
+using System.Numerics;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using EtfDotNet;
@@ -6,7 +7,7 @@ using EtfDotNet.Json;
 using EtfDotNet.Poco;
 using EtfDotNet.Types;
 
-Console.WriteLine(EtfConverter.ToObject<long>(345));
+// Console.WriteLine(EtfConverter.ToObject<long>(345));
 
 // var test = new EtfMap()
 // {
@@ -30,33 +31,36 @@ tuple[13] = "n";
 tuple[14] = "o";
 tuple[15] = "p";
 var test = (EtfContainer) tuple;
-var t = EtfConverter.ToObject<(string, string, string, string, string, string, string, string, string, string, string, string, string, string, string, string)>(test);
-Console.WriteLine($"{t} / {t.GetType()}");
+// var t = EtfConverter.ToObject<(string, string, string, string, string, string, string, string, string, string, string, string, string, string, string, string)>(test);
+// Console.WriteLine($"{t} / {t.GetType()}");
 
-var t2 = EtfConverter.ToObject<abc>("test?");
-Console.WriteLine($"{t2} / {t2.a} / {t2.GetType()}");
+var map = new EtfMap();
+map.Add("test", "abc");
+map.Add("other", "def");
+map.Add("v", "ghi");
+map.Add("nope", "jkl");
+var custom = EtfConverter.ToObject<IDictionary>(map);
+Console.WriteLine("-----");
+Console.WriteLine(custom.GetType());
+Console.WriteLine(custom["test"]);
+Console.WriteLine(custom["v"]);
+Console.WriteLine(custom["nope"]);
+Console.WriteLine("=====");
+var e = custom.GetEnumerator();
+while(e.MoveNext()) {
+    Console.WriteLine($"{e.Key} : {e.Value}");
+}
+Console.WriteLine("-----");
 
 // Console.WriteLine(clz.ThisIsAField);
 
-Console.WriteLine(EtfJson.ConvertEtfToJson(EtfConverter.ToEtf(new CustomClass())));
-
-struct abc
-{
-    public string a;
-    public static implicit operator abc(string s)
-    {
-        return new abc {
-            a = s
-        };
-    } 
-}
+// Console.WriteLine(EtfJson.ConvertEtfToJson(EtfConverter.ToEtf(new CustomClass())));
 
 class CustomClass
 {
-    public (string, string, string, string, string, string, string, string, string, string, string) v1 = ("", "", "", "", "", "", "", "", "", "", "");
-    public Tuple<string, string> v2 = new("item1", "item2");
-    public Tuple<string, string, string> v3;
-    public Tuple<string, string, string, string> v4;
+    public string test;
+    [EtfName("other")] public string v;
+    [EtfIgnore] public string nope = "not set";
 }
 
 // var data = new byte[]

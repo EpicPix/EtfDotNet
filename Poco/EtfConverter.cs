@@ -231,13 +231,36 @@ public class EtfConverter
                 throw new EtfException("Mismatched type, cannot assign NilExt to non enumerable type");
             }
 
-            if (listType.IsAssignableTo(t))
-            {
-                return Activator.CreateInstance(listType, mappedData);
-            }
-            return Activator.CreateInstance(t, mappedData);
+            return Activator.CreateInstance(listType.IsAssignableTo(t) ? listType : t, mappedData);
+
         }
-        throw new NotImplementedException("TODO: Add: MapExt");
+
+        if (container.Type == EtfConstants.MapExt)
+        {
+            var map = container.AsMap();
+            if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+            {
+                if (t.IsInterface)
+                {
+                    t = typeof(Dictionary<,>).MakeGenericType(t.GenericTypeArguments);
+                }
+                var keyType = t.GenericTypeArguments.Length == 2 ? t.GenericTypeArguments[0] : typeof(object);
+                var valueType = t.GenericTypeArguments.Length == 2 ? t.GenericTypeArguments[1] : typeof(object);
+                var dict = (IDictionary) Activator.CreateInstance(t);
+                foreach (var (etfKey, etfValue) in map)
+                {
+                    var key = ToObject(etfKey, keyType);
+                    if (key == null)
+                    {
+                        throw new EtfException("Key is null");
+                    }
+                    dict[key] = ToObject(etfValue, valueType);
+                }
+                return dict;
+            }
+            throw new NotImplementedException($"finish deserializing MapExt to objects");
+        }
+        throw new EtfException($"Deserializing {container.Type} is not implemented, report this bug.");
     }
     
     internal static Type[]? GetEnumerableType(Type type)
@@ -246,8 +269,8 @@ public class EtfConverter
         {
             return type.GetGenericArguments();
         }
-        return type.GetInterfaces().Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-            .FirstOrDefault()
+        return type.GetInterfaces()
+            .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             ?.GetGenericArguments();
     }
 
