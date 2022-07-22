@@ -1,4 +1,7 @@
 ﻿using System.Numerics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using AutoFixture;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using EtfDotNet;
@@ -65,26 +68,27 @@ using EtfDotNet.Types;
 
 var res = EtfConverter.ToObject<bool>(EtfContainer.FromAtom("true"));
 
-var nested = new CustomClass2()
-{
-    test = "ree"
-};
+Fixture fixture = new Fixture();
 
-var parent = new CustomClass2()
-{
-    hahaha = nested
-};
+var obj = fixture.Create<CustomClass2>();
 
-var val = EtfConverter.ToEtf(parent);
+var serialized = EtfConverter.ToEtf(obj);
 
-var deserialized = EtfConverter.ToObject<CustomClass2>(val);
+Console.WriteLine(EtfJson.ConvertEtfToJson(serialized));
 
-Console.WriteLine(EtfJson.ConvertEtfToJson(val));
+var deserialized = EtfConverter.ToObject<CustomClass2>(serialized);
+
+Console.WriteLine(JsonSerializer.Serialize(deserialized, new JsonSerializerOptions(){WriteIndented = true, IncludeFields = true}));
 
 class CustomClass2
 {
     public string test;
-    public CustomClass2 hahaha = null;
+    public Dictionary<string, long> niceDictionary { get; set; }
+    public Dictionary<string, int> nicerDictionary { get; set; }
+    public Dictionary<string, DateTime> nicestDictionary { get; set; }
+    public Dictionary<string, byte[]> betterDictionary { get; set; }
+    [EtfName("betterDictionary")] public int notevenadictionary { get; set; }
+    public Dictionary<string, (int, long, bool, string, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int)> bestDictionary { get; set; }
     [EtfName("other")] public string v;
     [EtfIgnore] public string nope = "not set";
 }

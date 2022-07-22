@@ -1,4 +1,6 @@
-﻿namespace EtfDotNet.Poco;
+﻿using System.Globalization;
+
+namespace EtfDotNet.Poco;
 
 public class EtfConverter
 {
@@ -8,7 +10,6 @@ public class EtfConverter
         {
             return EtfContainer.FromAtom("nil");
         }
-
         if (value is bool v_bool)
         {
             return v_bool ? EtfContainer.FromAtom("true") : EtfContainer.FromAtom("false");
@@ -32,6 +33,19 @@ public class EtfConverter
         if (value is double v_dbl)
         {
             return v_dbl;
+        }
+
+        if (value is long v_long)
+        {
+            return (BigInteger)v_long;
+        }
+        if (value is ulong v_ulong)
+        {
+            return (BigInteger)v_ulong;
+        }
+        if (value is IConvertible)
+        {
+            return JsonSerializer.Serialize(value).Trim(new []{'"'});
         }
 
         Type type = value.GetType();
@@ -144,10 +158,18 @@ public class EtfConverter
             {
                 return (ArraySegment<byte>) container;
             }
+            if (t.IsAssignableTo(typeof(IConvertible)) && t != typeof(string))
+            {
+                return JsonSerializer.Deserialize(container, t);
+            }
             throw new EtfException($"Cannot convert BinaryExt to {t}");
         }
         if (container.Type == EtfConstants.StringExt)
         {
+            if (t.IsAssignableTo(typeof(IConvertible)) && t != typeof(string))
+            {
+                return JsonSerializer.Deserialize('"' + (string)container + '"', t);
+            }
             return ((string) container).To(t);
         }
         if (container.Type == EtfConstants.SmallIntegerExt)
@@ -250,14 +272,16 @@ public class EtfConverter
         if (container.Type == EtfConstants.MapExt)
         {
             var map = container.AsMap();
-            if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+            var arg = GetDictionaryType(t);
+            if (t.IsGenericType && arg is not null)
             {
-                if (t.IsInterface)
+                if (typeof(Dictionary<,>).IsAssignableTo(t))
                 {
-                    t = typeof(Dictionary<,>).MakeGenericType(t.GenericTypeArguments);
+                    t = typeof(Dictionary<,>).MakeGenericType(arg);
                 }
-                var keyType = t.GenericTypeArguments.Length == 2 ? t.GenericTypeArguments[0] : typeof(object);
-                var valueType = t.GenericTypeArguments.Length == 2 ? t.GenericTypeArguments[1] : typeof(object);
+
+                var keyType = arg[0];
+                var valueType = arg[1];
                 var dict = (IDictionary) Activator.CreateInstance(t);
                 foreach (var (etfKey, etfValue) in map)
                 {
@@ -334,6 +358,17 @@ public class EtfConverter
         }
         return type.GetInterfaces()
             .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            ?.GetGenericArguments();
+    }
+    
+    internal static Type[]? GetDictionaryType(Type type)
+    {
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+        {
+            return type.GetGenericArguments();
+        }
+        return type.GetInterfaces()
+            .FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>))
             ?.GetGenericArguments();
     }
 
