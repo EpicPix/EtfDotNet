@@ -49,4 +49,25 @@ public class AtomContainerTests
         Assert.Equal(16, EtfFormat.GetPackedSize("testtesttest"));
     }
     
+    [Fact]
+    public void BooleanTest()
+    {
+        using EtfContainer val = true;
+        Assert.Equal(EtfConstants.AtomExt, val.Type);
+        bool got = val;
+        Assert.True(got);
+    }
+    
+    [Fact]
+    public void NilTest()
+    {
+        using EtfContainer val = EtfContainer.FromAtom("nil");
+        Assert.Equal(EtfConstants.AtomExt, val.Type);
+        bool? got = val;
+        Assert.Null(got);
+        Assert.Throws<InvalidCastException>(() =>
+        {
+            bool got = val;
+        });
+    }
 }
