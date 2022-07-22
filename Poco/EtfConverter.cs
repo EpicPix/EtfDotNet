@@ -120,15 +120,12 @@ public class EtfConverter
         if (container.Type == EtfConstants.AtomExt)
         {
             var name = container.ToAtom();
-            if (name is "true" or "false")
-            {
-                return (name == "true");
-            }
-            if (name is "nil")
-            {
-                return null;
-            }
-            return name.To(t);
+            return name switch {
+                "true" => true,
+                "false" => false,
+                "nil" => null,
+                _ => name.To(t)
+            };
         }
         if (container.Type == EtfConstants.BinaryExt)
         {
@@ -148,28 +145,23 @@ public class EtfConverter
         }
         if (container.Type == EtfConstants.StringExt)
         {
-            var val = (string)container;
-            return val.To(t);
+            return ((string) container).To(t);
         }
         if (container.Type == EtfConstants.SmallIntegerExt)
         {
-            byte data = container;
-            return data.To(t);
+            return ((byte) container).To(t);
         }
         if (container.Type == EtfConstants.IntegerExt)
         {
-            int data = container;
-            return data.To(t);
+            return ((int) container).To(t);
         }
         if (container.Type == EtfConstants.SmallBigExt)
         {
-            BigInteger data = container;
-            return data.To(t);
+            return ((BigInteger) container).To(t);
         }
         if (container.Type == EtfConstants.NewFloatExt)
         {
-            double data = container;
-            return data.To(t);
+            return ((double) container).To(t);
         }
         if (container.Type is EtfConstants.SmallTupleExt or EtfConstants.LargeTupleExt)
         {
@@ -188,24 +180,10 @@ public class EtfConverter
         }
         return amt;
     }
-    
-    private static readonly HashSet<Type> ValTupleTypes = new(
-        new [] { typeof(ValueTuple<>), typeof(ValueTuple<,>),
-            typeof(ValueTuple<,,>), typeof(ValueTuple<,,,>),
-            typeof(ValueTuple<,,,,>), typeof(ValueTuple<,,,,,>),
-            typeof(ValueTuple<,,,,,,>), typeof(ValueTuple<,,,,,,,>)
-        }
-    );
 
-    internal static bool IsValueTuple(Type t)
-    {
-        return t.IsGenericType
-               && ValTupleTypes.Contains(t.GetGenericTypeDefinition());
-    }
-    
     internal static ITuple CreateTuple(Type t, object?[] values)
     {
-        Type[] typeArguments = t.GenericTypeArguments;
+        var typeArguments = t.GenericTypeArguments;
         
         object?[] vals;
         if (values.Length >= 8)
@@ -218,12 +196,6 @@ public class EtfConverter
             vals = values;
         }
 
-        
-        
-        if (IsValueTuple(t))
-        {
-            return (ITuple)Activator.CreateInstance(t, vals);
-        }
         return (ITuple)Activator.CreateInstance(t, vals);
 
     }

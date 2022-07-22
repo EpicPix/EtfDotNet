@@ -33,9 +33,23 @@ var test = (EtfContainer) tuple;
 var t = EtfConverter.ToObject<(string, string, string, string, string, string, string, string, string, string, string, string, string, string, string, string)>(test);
 Console.WriteLine($"{t} / {t.GetType()}");
 
+var t2 = EtfConverter.ToObject<abc>("test?");
+Console.WriteLine($"{t2} / {t2.a} / {t2.GetType()}");
+
 // Console.WriteLine(clz.ThisIsAField);
 
 Console.WriteLine(EtfJson.ConvertEtfToJson(EtfConverter.ToEtf(new CustomClass())));
+
+struct abc
+{
+    public string a;
+    public static implicit operator abc(string s)
+    {
+        return new abc {
+            a = s
+        };
+    } 
+}
 
 class CustomClass
 {
