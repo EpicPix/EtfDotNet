@@ -9,7 +9,7 @@ using EtfDotNet.Json;
 using EtfDotNet.Poco;
 using EtfDotNet.Types;
 
-// // Console.WriteLine(EtfConverter.ToObject<long>(345));
+// // Console.WriteLine(EtfSerializer.Deserialize<long>(345));
 //
 // // var test = new EtfMap()
 // // {
@@ -33,7 +33,7 @@ using EtfDotNet.Types;
 // tuple[14] = "o";
 // tuple[15] = "p";
 // var test = (EtfContainer) tuple;
-// // var t = EtfConverter.ToObject<(string, string, string, string, string, string, string, string, string, string, string, string, string, string, string, string)>(test);
+// // var t = EtfSerializer.Deserialize<(string, string, string, string, string, string, string, string, string, string, string, string, string, string, string, string)>(test);
 // // Console.WriteLine($"{t} / {t.GetType()}");
 //
 // var map = new EtfMap();
@@ -41,7 +41,7 @@ using EtfDotNet.Types;
 // map.Add("other", "def");
 // map.Add("v", "ghi");
 // map.Add("nope", "jkl");
-// var custom = EtfConverter.ToObject<IDictionary<string, string>>(map);
+// var custom = EtfSerializer.Deserialize<IDictionary<string, string>>(map);
 // Console.WriteLine("-----");
 // Console.WriteLine(custom.GetType());
 // Console.WriteLine(custom["test"]);
@@ -56,7 +56,7 @@ using EtfDotNet.Types;
 //
 // // Console.WriteLine(clz.ThisIsAField);
 //
-// // Console.WriteLine(EtfJson.ConvertEtfToJson(EtfConverter.ToEtf(new CustomClass())));
+// // Console.WriteLine(EtfJson.ConvertEtfToJson(EtfSerializer.Serialize(new CustomClass())));
 //
 // class CustomClass
 // {
@@ -66,17 +66,17 @@ using EtfDotNet.Types;
 // }
 
 
-var res = EtfConverter.ToObject<bool>(EtfContainer.FromAtom("true"));
+var res = EtfSerializer.Deserialize<bool>(EtfContainer.FromAtom("true"));
 
 Fixture fixture = new Fixture();
 
 var obj = fixture.Create<CustomClass2>();
 
-var serialized = EtfConverter.ToEtf(obj);
+var serialized = EtfSerializer.Serialize(obj);
 
 Console.WriteLine(EtfJson.ConvertEtfToJson(serialized));
 
-var deserialized = EtfConverter.ToObject<CustomClass2>(serialized);
+var deserialized = EtfSerializer.Deserialize<CustomClass2>(serialized);
 
 Console.WriteLine(JsonSerializer.Serialize(deserialized, new JsonSerializerOptions(){WriteIndented = true, IncludeFields = true}));
 

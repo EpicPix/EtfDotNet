@@ -17,7 +17,7 @@ public class EtfList : List<EtfContainer>, IEtfComplex
 
     public static EtfList From<T>(IEnumerable<T> collection)
     {
-        return new EtfList(collection.Select(EtfConverter.ToEtf));
+        return new EtfList(collection.Select(EtfSerializer.Serialize));
     }
 
     public int GetSize()

@@ -2,9 +2,9 @@
 
 namespace EtfDotNet.Poco;
 
-public class EtfConverter
+public static class EtfSerializer
 {
-    public static EtfContainer ToEtf<T>(T value)
+    public static EtfContainer Serialize<T>(T value)
     {
         if (value is null)
         {
@@ -55,7 +55,7 @@ public class EtfConverter
             var map = new EtfMap();
             foreach (DictionaryEntry entry in v_dict)
             {
-                map.Add((ToEtf(entry.Key), ToEtf(entry.Value)));
+                map.Add((Serialize(entry.Key), Serialize(entry.Value)));
             }
 
             return map;
@@ -66,7 +66,7 @@ public class EtfConverter
             var list = new EtfList();
             foreach (var item in v_enu)
             {
-                list.Add(ToEtf(item));
+                list.Add(Serialize(item));
             }
             return list;
         }
@@ -75,7 +75,7 @@ public class EtfConverter
             var tup = new EtfTuple((uint)v_tup.Length);
             for (int i = 0; i < v_tup.Length; i++)
             {
-                tup[i] = ToEtf(v_tup[i]);
+                tup[i] = Serialize(v_tup[i]);
             }
             return tup;
         }
@@ -107,7 +107,7 @@ public class EtfConverter
             name = etfName.SerializedName;
         }
 
-        return (name, ToEtf(value));
+        return (name, Serialize(value));
     }
 
     private static string? GetMappedMemberName(MemberInfo info)
@@ -122,18 +122,14 @@ public class EtfConverter
         return name;
     }
 
-    public static T? ToObject<T>(EtfContainer container)
+    public static T? Deserialize<T>(EtfContainer container)
     {
-        return (T?) ToObject(container, typeof(T));
+        return (T?) Deserialize(container, typeof(T));
     }
 
     // ReSharper disable HeapView.BoxingAllocation
-    public static object? ToObject(EtfContainer container, Type t)
+    public static object? Deserialize(EtfContainer container, Type t)
     {
-        // if (container.IsConvertibleTo(t))
-        // {
-        //     return container.To(t);
-        // }
         if (container.Type == EtfConstants.AtomExt)
         {
             var name = container.ToAtom();
@@ -234,7 +230,7 @@ public class EtfConverter
                 var arr = Array.CreateInstance(t.GetElementType()!, data.Count);
                 for (int i = 0; i < data.Count; i++)
                 {
-                    arr.SetValue(ToObject(data[i], t.GetElementType()), i);
+                    arr.SetValue(Deserialize(data[i], t.GetElementType()), i);
                 }
 
                 return arr;
@@ -255,7 +251,7 @@ public class EtfConverter
             var mappedData = Array.CreateInstance(args[0], data.Count);
             for (int i = 0; i < data.Count; i++)
             {
-                mappedData.SetValue(ToObject(data[i], args[0]), i);
+                mappedData.SetValue(Deserialize(data[i], args[0]), i);
             }
 
             var enuType = typeof(IEnumerable<>).MakeGenericType(args);
@@ -285,12 +281,12 @@ public class EtfConverter
                 var dict = (IDictionary) Activator.CreateInstance(t);
                 foreach (var (etfKey, etfValue) in map)
                 {
-                    var key = ToObject(etfKey, keyType);
+                    var key = Deserialize(etfKey, keyType);
                     if (key == null)
                     {
                         throw new EtfException("Key is null");
                     }
-                    dict[key] = ToObject(etfValue, valueType);
+                    dict[key] = Deserialize(etfValue, valueType);
                 }
                 return dict;
             }
@@ -337,11 +333,11 @@ public class EtfConverter
                 var info = members[key];
                 if (info is FieldInfo fi)
                 {
-                    fi.SetValue(obj, ToObject(value, fi.FieldType));
+                    fi.SetValue(obj, Deserialize(value, fi.FieldType));
                 }
                 if (info is PropertyInfo pi)
                 {
-                    pi.SetValue(obj, ToObject(value, pi.PropertyType));
+                    pi.SetValue(obj, Deserialize(value, pi.PropertyType));
                 }
             }
 
@@ -423,7 +419,7 @@ public class EtfConverter
                 genericIndex -= 7;
                 generic = generic.GenericTypeArguments[genericIndex < 8 ? genericIndex : 7];
             }
-            values[i] = ToObject(tuple[i], generic);
+            values[i] = Deserialize(tuple[i], generic);
         }
 
         return CreateTuple(t, values);
