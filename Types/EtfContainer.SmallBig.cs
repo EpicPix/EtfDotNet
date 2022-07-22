@@ -1,7 +1,4 @@
-﻿using System.Numerics;
-using System.Text;
-
-namespace EtfDotNet.Types;
+﻿namespace EtfDotNet.Types;
 
 public partial struct EtfContainer
 {

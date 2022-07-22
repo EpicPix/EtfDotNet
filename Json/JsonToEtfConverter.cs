@@ -1,8 +1,3 @@
-using System.Numerics;
-using System.Text;
-using System.Text.Json.Nodes;
-using EtfDotNet.Types;
-
 namespace EtfDotNet.Json;
 
 internal static class JsonToEtfConverter

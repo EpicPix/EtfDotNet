@@ -1,7 +1,4 @@
-﻿using System.Buffers;
-using System.Diagnostics.Contracts;
-
-namespace EtfDotNet.Types;
+﻿namespace EtfDotNet.Types;
 
 public partial struct EtfContainer : IDisposable
 {

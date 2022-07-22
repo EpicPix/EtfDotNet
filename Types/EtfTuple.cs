@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Runtime.CompilerServices;
-
 namespace EtfDotNet.Types;
 
 public class EtfTuple : IReadOnlyList<EtfContainer>, IEtfComplex, ITuple

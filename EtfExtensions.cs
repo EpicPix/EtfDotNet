@@ -1,5 +1,3 @@
-using System.Buffers;
-
 namespace EtfDotNet;
 
 public static class EtfExtensions

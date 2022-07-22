@@ -1,12 +1,4 @@
-﻿using System.Collections;
-using System.Numerics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using EtfDotNet.Types;
-using TB.ComponentModel;
-
-namespace EtfDotNet.Poco;
+﻿namespace EtfDotNet.Poco;
 
 public class EtfConverter
 {

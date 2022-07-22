@@ -1,6 +1,3 @@
-using System.Diagnostics.Contracts;
-using EtfDotNet.Types;
-
 namespace EtfDotNet;
 
 public static class EtfEncoder

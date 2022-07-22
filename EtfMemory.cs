@@ -1,6 +1,4 @@
-﻿using EtfDotNet.Types;
-
-namespace EtfDotNet;
+﻿namespace EtfDotNet;
 
 public class EtfMemory
 {
