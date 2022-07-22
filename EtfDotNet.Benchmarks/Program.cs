@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Numerics;
+﻿using System.Numerics;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using EtfDotNet;
@@ -7,58 +6,85 @@ using EtfDotNet.Json;
 using EtfDotNet.Poco;
 using EtfDotNet.Types;
 
-// Console.WriteLine(EtfConverter.ToObject<long>(345));
-
-// var test = new EtfMap()
+// // Console.WriteLine(EtfConverter.ToObject<long>(345));
+//
+// // var test = new EtfMap()
+// // {
+// //     {"its not a property", "abc"}
+// // };
+// var tuple = new EtfTuple(16);
+// tuple[0] = "a";
+// tuple[1] = "b";
+// tuple[2] = "c";
+// tuple[3] = "d";
+// tuple[4] = "e";
+// tuple[5] = "f";
+// tuple[6] = "g";
+// tuple[7] = "h";
+// tuple[8] = "i";
+// tuple[9] = "j";
+// tuple[10] = "k";
+// tuple[11] = "l";
+// tuple[12] = "m";
+// tuple[13] = "n";
+// tuple[14] = "o";
+// tuple[15] = "p";
+// var test = (EtfContainer) tuple;
+// // var t = EtfConverter.ToObject<(string, string, string, string, string, string, string, string, string, string, string, string, string, string, string, string)>(test);
+// // Console.WriteLine($"{t} / {t.GetType()}");
+//
+// var map = new EtfMap();
+// map.Add("test", "abc");
+// map.Add("other", "def");
+// map.Add("v", "ghi");
+// map.Add("nope", "jkl");
+// var custom = EtfConverter.ToObject<IDictionary<string, string>>(map);
+// Console.WriteLine("-----");
+// Console.WriteLine(custom.GetType());
+// Console.WriteLine(custom["test"]);
+// Console.WriteLine(custom["v"]);
+// Console.WriteLine(custom["nope"]);
+// Console.WriteLine("=====");
+// var e = custom.GetEnumerator();
+// while(e.MoveNext()) {
+//     Console.WriteLine($"{e.Current.Key} : {e.Current.Value}");
+// }
+// Console.WriteLine("-----");
+//
+// // Console.WriteLine(clz.ThisIsAField);
+//
+// // Console.WriteLine(EtfJson.ConvertEtfToJson(EtfConverter.ToEtf(new CustomClass())));
+//
+// class CustomClass
 // {
-//     {"its not a property", "abc"}
-// };
-var tuple = new EtfTuple(16);
-tuple[0] = "a";
-tuple[1] = "b";
-tuple[2] = "c";
-tuple[3] = "d";
-tuple[4] = "e";
-tuple[5] = "f";
-tuple[6] = "g";
-tuple[7] = "h";
-tuple[8] = "i";
-tuple[9] = "j";
-tuple[10] = "k";
-tuple[11] = "l";
-tuple[12] = "m";
-tuple[13] = "n";
-tuple[14] = "o";
-tuple[15] = "p";
-var test = (EtfContainer) tuple;
-// var t = EtfConverter.ToObject<(string, string, string, string, string, string, string, string, string, string, string, string, string, string, string, string)>(test);
-// Console.WriteLine($"{t} / {t.GetType()}");
+//     public string test;
+//     [EtfName("other")] public string v;
+//     [EtfIgnore] public string nope = "not set";
+// }
 
-var map = new EtfMap();
-map.Add("test", "abc");
-map.Add("other", "def");
-map.Add("v", "ghi");
-map.Add("nope", "jkl");
-var custom = EtfConverter.ToObject<IDictionary>(map);
-Console.WriteLine("-----");
-Console.WriteLine(custom.GetType());
-Console.WriteLine(custom["test"]);
-Console.WriteLine(custom["v"]);
-Console.WriteLine(custom["nope"]);
-Console.WriteLine("=====");
-var e = custom.GetEnumerator();
-while(e.MoveNext()) {
-    Console.WriteLine($"{e.Key} : {e.Value}");
-}
-Console.WriteLine("-----");
 
-// Console.WriteLine(clz.ThisIsAField);
+var res = EtfConverter.ToObject<bool>(EtfContainer.FromAtom("true"));
 
-// Console.WriteLine(EtfJson.ConvertEtfToJson(EtfConverter.ToEtf(new CustomClass())));
+var nested = new CustomClass2()
+{
+    test = "ree"
+};
 
-class CustomClass
+var parent = new CustomClass2()
+{
+    hahaha = nested
+};
+
+var val = EtfConverter.ToEtf(parent);
+
+var deserialized = EtfConverter.ToObject<CustomClass2>(val);
+
+Console.WriteLine(EtfJson.ConvertEtfToJson(val));
+
+class CustomClass2
 {
     public string test;
+    public CustomClass2 hahaha = null;
     [EtfName("other")] public string v;
     [EtfIgnore] public string nope = "not set";
 }

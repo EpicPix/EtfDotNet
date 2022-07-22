@@ -96,6 +96,18 @@ public class EtfConverter
         return (name, ToEtf(value));
     }
 
+    private static string? GetMappedMemberName(MemberInfo info)
+    {
+        if (info.GetCustomAttribute<EtfIgnoreAttribute>() is not null) return null;
+        string name = info.Name;
+        var etfName = info.GetCustomAttribute<EtfNameAttribute>();
+        if (etfName is not null)
+        {
+            name = etfName.SerializedName;
+        }
+        return name;
+    }
+
     public static T? ToObject<T>(EtfContainer container)
     {
         return (T?) ToObject(container, typeof(T));
@@ -104,10 +116,10 @@ public class EtfConverter
     // ReSharper disable HeapView.BoxingAllocation
     public static object? ToObject(EtfContainer container, Type t)
     {
-        if (container.IsConvertibleTo(t))
-        {
-            return container.To(t);
-        }
+        // if (container.IsConvertibleTo(t))
+        // {
+        //     return container.To(t);
+        // }
         if (container.Type == EtfConstants.AtomExt)
         {
             var name = container.ToAtom();
@@ -258,7 +270,58 @@ public class EtfConverter
                 }
                 return dict;
             }
-            throw new NotImplementedException($"finish deserializing MapExt to objects");
+            var etfMembers = new Dictionary<string, EtfContainer>();
+            foreach (var (etfKey, etfValue) in map)
+            {
+                if (etfKey.Type != EtfConstants.BinaryExt && etfKey.Type != EtfConstants.StringExt)
+                {
+                    throw new EtfException("Mismatched type, cannot deserialize non-string map keys into an object");
+                }
+
+                var key = (string)etfKey;
+                if (etfMembers.ContainsKey(key))
+                {
+                    throw new EtfException("Invalid type, cannot deserialize a map containing duplicate keys into an object");
+                }
+                etfMembers[key] = etfValue;
+            }
+
+            var members = new Dictionary<string, MemberInfo>();
+            var props = t.GetProperties();
+            foreach (var propertyInfo in props)
+            {
+                var val = GetMappedMemberName(propertyInfo);
+                if(val is null) continue;
+                members[val] = propertyInfo;
+            }
+            var fields = t.GetFields();
+            foreach (var fieldInfo in fields)
+            {
+                var val = GetMappedMemberName(fieldInfo);
+                if(val is null) continue;
+                members[val] = fieldInfo;
+            }
+            // assign values to members
+            var obj = Activator.CreateInstance(t);
+            foreach (var (key, value) in etfMembers)
+            {
+                if (!members.ContainsKey(key))
+                {
+                    throw new EtfException($"Mismatched member, cannot map etf-serialized key {key} to a member of the type {t}. No matching member found.");
+                }
+
+                var info = members[key];
+                if (info is FieldInfo fi)
+                {
+                    fi.SetValue(obj, ToObject(value, fi.FieldType));
+                }
+                if (info is PropertyInfo pi)
+                {
+                    pi.SetValue(obj, ToObject(value, pi.PropertyType));
+                }
+            }
+
+            return obj;
         }
         throw new EtfException($"Deserializing {container.Type} is not implemented, report this bug.");
     }
