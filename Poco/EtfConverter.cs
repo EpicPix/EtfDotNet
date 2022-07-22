@@ -167,6 +167,11 @@ public class EtfConverter
             }
 
             var args = GetEnumerableType(t);
+
+            if (args == null)
+            {
+                throw new EtfException($"Expected type {t} to implement IEnumerable<>");
+            }
             
             if (args.Length != 1)
             {
@@ -186,11 +191,61 @@ public class EtfConverter
             }
             return Activator.CreateInstance(t);
         }
-        throw new NotImplementedException("TODO: Add: NilExt ListExt MapExt");
+        
+        if (container.Type == EtfConstants.ListExt)
+        {
+            var data = container.AsList();
+            if (t.IsArray)
+            {
+                var arr = Array.CreateInstance(t.GetElementType()!, data.Count);
+                for (int i = 0; i < data.Count; i++)
+                {
+                    arr.SetValue(ToObject(data[i], t.GetElementType()), i);
+                }
+
+                return arr;
+            }
+
+            var args = GetEnumerableType(t);
+
+            if (args == null)
+            {
+                throw new EtfException($"Expected type {t} to implement IEnumerable<>");
+            }
+            
+            if (args.Length != 1)
+            {
+                throw new EtfException($"Expected one generic type argument for type {t}");
+            }
+            
+            var mappedData = Array.CreateInstance(args[0], data.Count);
+            for (int i = 0; i < data.Count; i++)
+            {
+                mappedData.SetValue(ToObject(data[i], args[0]), i);
+            }
+
+            var enuType = typeof(IEnumerable<>).MakeGenericType(args);
+            var listType = typeof(List<>).MakeGenericType(args);
+            if (!t.IsAssignableTo(enuType) && t != enuType)
+            {
+                throw new EtfException("Mismatched type, cannot assign NilExt to non enumerable type");
+            }
+
+            if (listType.IsAssignableTo(t))
+            {
+                return Activator.CreateInstance(listType, mappedData);
+            }
+            return Activator.CreateInstance(t, mappedData);
+        }
+        throw new NotImplementedException("TODO: Add: MapExt");
     }
     
     internal static Type[]? GetEnumerableType(Type type)
     {
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+        {
+            return type.GetGenericArguments();
+        }
         return type.GetInterfaces().Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             .FirstOrDefault()
             ?.GetGenericArguments();
