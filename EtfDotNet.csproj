@@ -31,4 +31,8 @@
       <None Remove="EtfDotNet.Tests\**" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="UniversalTypeConverter" Version="2.6.0" />
+    </ItemGroup>
+
 </Project>

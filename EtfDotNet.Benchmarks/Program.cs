@@ -6,7 +6,7 @@ using EtfDotNet.Json;
 using EtfDotNet.Poco;
 using EtfDotNet.Types;
 
-
+Console.WriteLine(EtfConverter.ToObject<long>(345));
 
 // var test = new EtfMap()
 // {
@@ -35,13 +35,12 @@ Console.WriteLine($"{t} / {t.GetType()}");
 
 // Console.WriteLine(clz.ThisIsAField);
 
-
 Console.WriteLine(EtfJson.ConvertEtfToJson(EtfConverter.ToEtf(new CustomClass())));
 
 class CustomClass
 {
     public (string, string, string, string, string, string, string, string, string, string, string) v1 = ("", "", "", "", "", "", "", "", "", "", "");
-    public Tuple<string, string> v2;
+    public Tuple<string, string> v2 = new("item1", "item2");
     public Tuple<string, string, string> v3;
     public Tuple<string, string, string, string> v4;
 }

@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using EtfDotNet.Types;
+using TB.ComponentModel;
 
 namespace EtfDotNet.Poco;
 
@@ -112,95 +113,63 @@ public class EtfConverter
     // ReSharper disable HeapView.BoxingAllocation
     public static object? ToObject(EtfContainer container, Type t)
     {
-        if (typeof(EtfContainer).IsAssignableFrom(t))
+        if (container.IsConvertibleTo(t))
         {
-            return container.As(t);
+            return container.To(t);
         }
         if (container.Type == EtfConstants.AtomExt)
         {
             var name = container.ToAtom();
             if (name is "true" or "false")
             {
-                return (name == "true").As(t);
+                return (name == "true");
             }
             if (name is "nil")
             {
-                if (Nullable.GetUnderlyingType(t) != null || !t.IsValueType)
-                {
-                    return null;
-                }
-                throw new EtfException("Cannot convert non-nullable object to null");
+                return null;
             }
-            if (!typeof(string).IsAssignableFrom(t))
-            {
-                throw new EtfException($"Cannot convert {t} to a string");
-            }
-            return name.As(t);
+            return name.To(t);
         }
         if (container.Type == EtfConstants.BinaryExt)
         {
             if (typeof(string).IsAssignableFrom(t))
             {
-                return Encoding.UTF8.GetString((ArraySegment<byte>) container).As(t);
+                return Encoding.UTF8.GetString((ArraySegment<byte>) container);
             }
             if (typeof(byte[]).IsAssignableFrom(t))
             {
-                return ((ArraySegment<byte>) container).ToArray().As(t);
+                return ((ArraySegment<byte>) container).ToArray();
             }
             if (typeof(ArraySegment<byte>).IsAssignableFrom(t))
             {
-                return ((ArraySegment<byte>) container).As(t);
+                return (ArraySegment<byte>) container;
             }
             throw new EtfException($"Cannot convert BinaryExt to {t}");
         }
         if (container.Type == EtfConstants.StringExt)
         {
-            if (typeof(string).IsAssignableFrom(t))
-            {
-                return ((string) container).As(t);
-            }
-            throw new EtfException($"Cannot convert StringExt to {t}");
+            var val = (string)container;
+            return val.To(t);
         }
         if (container.Type == EtfConstants.SmallIntegerExt)
         {
             byte data = container;
-            if (typeof(byte)      .IsAssignableFrom(t)) return ((byte)       data).As(t);
-            if (typeof(short)     .IsAssignableFrom(t)) return ((short)      data).As(t);
-            if (typeof(ushort)    .IsAssignableFrom(t)) return ((ushort)     data).As(t);
-            if (typeof(int)       .IsAssignableFrom(t)) return ((int)        data).As(t);
-            if (typeof(uint)      .IsAssignableFrom(t)) return ((uint)       data).As(t);
-            if (typeof(long)      .IsAssignableFrom(t)) return ((long)       data).As(t);
-            if (typeof(ulong)     .IsAssignableFrom(t)) return ((ulong)      data).As(t);
-            if (typeof(BigInteger).IsAssignableFrom(t)) return ((BigInteger) data).As(t);
-            if (typeof(string)    .IsAssignableFrom(t)) return data.ToString()    .As(t);
-            throw new EtfException($"Cannot convert SmallIntegerExt to {t}");
+            return data.To(t);
         }
         if (container.Type == EtfConstants.IntegerExt)
         {
             int data = container;
-            if (typeof(int)       .IsAssignableFrom(t)) return ((int)        data).As(t);
-            if (typeof(uint)      .IsAssignableFrom(t)) return ((uint)       data).As(t);
-            if (typeof(long)      .IsAssignableFrom(t)) return ((long)       data).As(t);
-            if (typeof(ulong)     .IsAssignableFrom(t)) return ((ulong)      data).As(t);
-            if (typeof(BigInteger).IsAssignableFrom(t)) return ((BigInteger) data).As(t);
-            if (typeof(string)    .IsAssignableFrom(t)) return data.ToString()    .As(t);
-            throw new EtfException($"Cannot convert IntegerExt to {t}");
+            return data.To(t);
         }
         if (container.Type == EtfConstants.SmallBigExt)
         {
             BigInteger data = container;
-            if (typeof(BigInteger).IsAssignableFrom(t)) return ((BigInteger) data).As(t);
-            if (typeof(string)    .IsAssignableFrom(t)) return data.ToString()    .As(t);
-            throw new EtfException($"Cannot convert SmallBigExt to {t}");
+            return data.To(t);
         }
         if (container.Type == EtfConstants.NewFloatExt)
         {
             double data = container;
-            if (typeof(double).IsAssignableFrom(t))
-            {
-                return data.As(t);
-            }
-            throw new EtfException($"Cannot convert NewFloatExt to {t}");
+            return data.To(t);
         }
         if (container.Type is EtfConstants.SmallTupleExt or EtfConstants.LargeTupleExt)
         {
@@ -219,20 +188,44 @@ public class EtfConverter
         }
         return amt;
     }
+    
+    private static readonly HashSet<Type> ValTupleTypes = new(
+        new [] { typeof(ValueTuple<>), typeof(ValueTuple<,>),
+            typeof(ValueTuple<,,>), typeof(ValueTuple<,,,>),
+            typeof(ValueTuple<,,,,>), typeof(ValueTuple<,,,,,>),
+            typeof(ValueTuple<,,,,,,>), typeof(ValueTuple<,,,,,,,>)
+        }
+    );
 
-    internal static ITuple CreateTuple(Type t, object? value1 = null, object? value2 = null, object? value3 = null, object? value4 = null, object? value5 = null, object? value6 = null, object? value7 = null, object? value8 = null)
+    internal static bool IsValueTuple(Type t)
     {
-        var length = GetTupleLength(t);
-        return length switch {
-            1 => (ITuple) Activator.CreateInstance(t, value1)!,
-            2 => (ITuple) Activator.CreateInstance(t, value1, value2)!,
-            3 => (ITuple) Activator.CreateInstance(t, value1, value2, value3)!,
-            4 => (ITuple) Activator.CreateInstance(t, value1, value2, value3, value4)!,
-            5 => (ITuple) Activator.CreateInstance(t, value1, value2, value3, value4, value5)!,
-            6 => (ITuple) Activator.CreateInstance(t, value1, value2, value3, value4, value5, value6)!,
-            7 => (ITuple) Activator.CreateInstance(t, value1, value2, value3, value4, value5, value6, value7)!,
-            _ => (ITuple) Activator.CreateInstance(t, value1, value2, value3, value4, value5, value6, value7, value8)!
-        };
+        return t.IsGenericType
+               && ValTupleTypes.Contains(t.GetGenericTypeDefinition());
+    }
+    
+    internal static ITuple CreateTuple(Type t, object?[] values)
+    {
+        Type[] typeArguments = t.GenericTypeArguments;
+        
+        object?[] vals;
+        if (values.Length >= 8)
+        {
+            vals = values[..8];
+            vals[7] = CreateTuple(typeArguments[7], values[7..]);
+        }
+        else
+        {
+            vals = values;
+        }
+
+        
+        
+        if (IsValueTuple(t))
+        {
+            return (ITuple)Activator.CreateInstance(t, vals);
+        }
+        return (ITuple)Activator.CreateInstance(t, vals);
+
     }
 
     internal static ITuple ToTuple(EtfTuple tuple, Type t)
@@ -258,26 +251,7 @@ public class EtfConverter
             }
             values[i] = ToObject(tuple[i], generic);
         }
-        // object? currentTuple = null;
-        // how
-        // Console.WriteLine(CreateTuple(t, values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], CreateTuple(values[8], values[9])));
-        // Console.WriteLine(CreateTuple(t, values[0], values[1], values[2]));
-        throw new NotImplementedException();
-    }
-}
 
-internal static class ObjectExtensions
-{
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    internal static object As(this object obj, Type type)
-    {
-        try
-        {
-            return Convert.ChangeType(obj, type);
-        } catch (FormatException)
-        {
-            throw new InvalidCastException($"Unable to cast object of type '{obj.GetType()}' to type '{type}'.");
-        }
+        return CreateTuple(t, values);
     }
 }
