@@ -17,7 +17,7 @@ public class AtomContainerTests
     [Fact]
     public void AtomToEtfTest()
     {
-        using var atom = (EtfContainer) "test";
+        using var atom = EtfContainer.FromAtom("test");
         Assert.Equal(EtfConstants.AtomExt, atom.Type);
         Assert.Equal("test", atom.ToAtom());
         Assert.Equal(7, EtfEncoder.CalculateTypeSize(atom));
@@ -29,9 +29,9 @@ public class AtomContainerTests
     [Fact]
     public void ContainerToAtomTest()
     {
-        using EtfContainer val = "test";
+        using EtfContainer val = EtfContainer.FromAtom("test");
         Assert.Equal(EtfConstants.AtomExt, val.Type);
-        string got = val;
+        string got = val.ToAtom();
         Assert.Equal("test", got);
     }
 
