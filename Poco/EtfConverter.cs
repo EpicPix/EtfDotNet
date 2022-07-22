@@ -158,7 +158,42 @@ public class EtfConverter
         {
             return ToTuple(container.AsTuple(), t);
         }
+
+        if (container.Type == EtfConstants.NilExt)
+        {
+            if (t.IsArray)
+            {
+                return Array.CreateInstance(t.GetElementType()!, 0);
+            }
+
+            var args = GetEnumerableType(t);
+            
+            if (args.Length != 1)
+            {
+                throw new EtfException($"Expected one generic type argument for type {t}");
+            }
+
+            var enuType = typeof(IEnumerable<>).MakeGenericType(args);
+            var listType = typeof(List<>).MakeGenericType(args);
+            if (!t.IsAssignableTo(enuType) && t != enuType)
+            {
+                throw new EtfException("Mismatched type, cannot assign NilExt to non enumerable type");
+            }
+
+            if (listType.IsAssignableTo(t))
+            {
+                return Activator.CreateInstance(listType);
+            }
+            return Activator.CreateInstance(t);
+        }
         throw new NotImplementedException("TODO: Add: NilExt ListExt MapExt");
+    }
+    
+    internal static Type[]? GetEnumerableType(Type type)
+    {
+        return type.GetInterfaces().Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            .FirstOrDefault()
+            ?.GetGenericArguments();
     }
 
     internal static long GetTupleLength(Type t)
