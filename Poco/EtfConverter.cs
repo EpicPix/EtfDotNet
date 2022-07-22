@@ -109,7 +109,6 @@ public class EtfConverter
         return (T?) ToObject(container, typeof(T));
     }
 
-    // ReSharper disable RedundantCast
     // ReSharper disable HeapView.BoxingAllocation
     public static object? ToObject(EtfContainer container, Type t)
     {
