@@ -107,7 +107,7 @@ public static class EtfSerializer
             name = etfName.SerializedName;
         }
 
-        return (name, Serialize(value));
+        return (EtfContainer.FromAtom(name), Serialize(value));
     }
 
     private static string? GetMappedMemberName(MemberInfo info)
